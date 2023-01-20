@@ -76,11 +76,13 @@ jobs:
             })
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          files: |
+            target/*.jar
           tag_name: ${{ github.event.inputs.release-tag }}
-          release_name: Release ${{ github.event.inputs.release-tag }}
           draft: false
           prerelease: false
+          generate_release_notes: true
