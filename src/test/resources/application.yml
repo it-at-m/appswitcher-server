@@ -1,0 +1,47 @@
+appswitcher:
+  apps:
+    mail:
+      display-name: Mail
+      url: https://mail.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      tags:
+        - global
+    rbslog:
+      display-name: RBS-Log
+      url: https://rbslog.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      client-id: rbslog
+      tags:
+        - rbs
+    kitafinder:
+      display-name: kita-planer
+      url: https://kita-planer.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      tags:
+        - rbs
+    persft:
+      display-name: PersFT
+      url: https://persft.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      client-id: persft
+      tags: 
+        - kvr
+    kfrei:
+      display-name: KFREI
+      url: https://krfrei.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      client-id: kfrei
+      tags: 
+        - rbs
+    rbseinr:
+      display-name: kita-einrichtung+
+      url: https://kita.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      client-id: rbseinr
+      tags: 
+        - rbs
+    rbsaura:
+      display-name: AuRa
+      url: https://aura.example.org
+      image-url: https://i.imgur.com/PA25O7T.png
+      client-id: rbsaura

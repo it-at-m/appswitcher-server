@@ -1,0 +1,78 @@
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      cors:
+        allowedOrigins:
+          - "http://localhost:8081"
+          - "http://127.0.0.1:8081"
+          - "*"
+        allowedMethods: "*"
+        allowedHeaders: "*"
+        allowCredentials: false
+        maxAge: 3600
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      enabled: true
+      probes.enabled: true
+    info:
+      enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - keycloak
+
+  session:
+    timeout: ${appswitcher.keycloak.sso-session-max} # same maximum lifetime like SSO Session
+  # security config
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${appswitcher.keycloak.issuer-uri}
+        registration:
+          keycloak:
+            client-id: ${appswitcher.keycloak.client-id}
+            client-secret: ${appswitcher.keycloak.client-secret}
+            scope: "${appswitcher.keycloak.scopes}"
+    
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - demo
+    
+appswitcher:
+  apps:
+    telefonbuch:
+      display-name: Telefonbuch
+      url: https://www.gelbeseiten.de/
+      image-url: https://i.imgur.com/PA25O7T.png
+      tags:
+        - global
+        - telefonbuch
+        
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - debug
+    
+            
+logging:
+  level:
+    '[de.muenchen.oss.appswitcher]': DEBUG

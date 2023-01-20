@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <style>
+    @import url("https://fonts.googleapis.com/css?family=Varela+Round");
+
+    nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      justify-items: center;
+      align-items: center;
+
+      gap: 8px;
+      padding: 8px;
+    }
+
+    a {
+      text-decoration: unset;
+      color: unset;
+    }
+
+    .tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      gap: 4px;
+      height: 70px;
+
+      cursor: pointer;
+
+      aspect-ratio: 1;
+      border-radius: 8px;
+      padding: 6px;
+
+      font-family: Roboto, sans-serif;
+      font-size: 0.875rem;
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .tile:hover {
+      background-color: #f1f1f1;
+    }
+
+    img {
+      object-fit: contain;
+    }
+  </style>
+
+  <head>
+    <title>Appswitcher</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+
+  <body>
+    <nav>
+      <a
+        th:each="app: ${apps}"
+        th:id="'appswitcher-' + ${app.key}"
+        th:title="${app.value.displayName}"
+        th:href="${app.value.url}"
+        target="_blank"
+      >
+        <div class="tile">
+          <img width="50" height="50" th:src="${app.value.imageUrl}" th:alt="${app.value.displayName}" />
+          <span
+            th:text="${#strings.abbreviate(app.value.displayName,15)}"
+          ></span>
+        </div>
+      </a>
+    </nav>
+  </body>
+</html>
