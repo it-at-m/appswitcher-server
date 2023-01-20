@@ -17,7 +17,8 @@ jobs:
         with:
           policy-path: .github/policies/default.yml
           token: ${{ secrets.GITHUB_TOKEN }}
-          argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning"
+          argvs: "--disable-dependabot --disable-secret-scanning"
+          # argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning"
 
   build-maven:
     needs: compliance
@@ -51,7 +52,7 @@ jobs:
           images: ghcr.io/${{ github.repository }}
           tags: |
             type=sha
-            type=ref
+            type=ref,event=branch
       - name: Build image
         uses: docker/build-push-action@v3
         with:
