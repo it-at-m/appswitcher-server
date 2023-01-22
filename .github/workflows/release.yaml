@@ -32,7 +32,6 @@ jobs:
           java-version: 17
           distribution: "temurin"
       - name: Perform maven release
-        if: github.event.inputs.snapshot-build == 'n'
         run: |
           mvn -B release:prepare -Dtag=${{ github.event.inputs.release-tag }} -DreleaseVersion=${{ github.event.inputs.release-version }} -DdevelopmentVersion=${{ github.event.inputs.development-version }} -Darguments="-DskipTests"
 
