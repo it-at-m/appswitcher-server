@@ -9,113 +9,116 @@
 
 # appswitcher-server
 
-**appswitcher-server** renders a simple webpage which includes icon-based hyperlinks to common web applications used in your (corporate) environment.
-The static page is designed to be included (e.g. by using an `iframe`) in your web applications to provide your users **a quick way to switch between these applications**.
+**appswitcher-server** renders a simple web page containing icon-based hyperlinks to common web applications used in your (corporate) environment.
+The static page is designed to be embedded (e.g. using an `iframe`) into your web applications to provide your users with **a quick way to switch between these applications**.
 
 appswitcher-server was **heavily inspired by** [Google's App Bar](https://support.google.com/accounts/answer/1714464?hl=en#zippy=%2Cswitch-between-apps), which provides a quick way to switch between Google Apps.
 
-At [it@M](https://github.com/it-at-m) we use appswitcher-server internally to provide our customers a quick way to switch to internal or external web applications like the Social Intranet "WiLMA", the phone book and  many more web applications:
+At [it@M](https://github.com/it-at-m) we use appswitcher-server internally to offer our customers a quick way to switch between internal or external web applications like the social intranet "WiLMA", the phone book and many other web applications:
 
 ![Screenshot of an example of appswitcher-server's webpage](docs/with_default_tags.png)
 
-The webpage of appswitcher-server is therefore embedded (mostly by using an `iframe`) in the App Bar of our web applications (= `client applications`):
+The web page of appswitcher-server will be embedded (mostly by using an `iframe`) into the app bar of our web applications (= `client applications`):
 
 ![Screenshot of appswitcher-servers webpage embedded in a web application's app bar](docs/embedded_in_applications.png)
 
-appswitcher-server can be easily configured **to include your own common web applications icon-hyperlinks**.
-
 ## Features
 
-### Custom Applications
+### Custom applications
 
-The included applications can be configured freely by adding them to the `apps` entry in [`application.yml`](src/main/resources/application.yml), for example:
+Applications can be freely configured by adding them to the `apps` map in [`application.yml`](src/main/resources/application.yml), for example:
 
 ```yml
 appswitcher.apps:
-  github:
+  github: # unique key
     display-name: GitHub
     url: https://github.com/it-at-m
-    image-path: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
+    image-url: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
 ```
 
 | Property | Description |
 |----------|-------------|
 | `display-name` | Name of the application |
 | `url` | URL of the application, will be used for the hyperlink |
-| `image-url` | URL for the applications image/icon. The image should be quadratic, size minimum: 48x48px, maximum 144x144px. The URL must be reachable by clients without any authentication. |
+| `image-url` | URL for the applications image/icon. The image should be quadratic, size  should be between `48x48` and `144x144` pixels. |
 
 
 ### Tags
 
-Applications can be assigned (multiple) tags. For example, you could use tags to differ applications by their domain like `finance`, `development`, `customer-relations` and so on.
+Applications can be assigned (multiple) tags. For example, you could use tags to distinguish applications by their application domain like `finance`, `development`, `customer-relations` and so on.
 
 ```yml
 appswitcher.apps:
   github:
     display-name: GitHub
     url: https://github.com/it-at-m
-    image-path: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
+    image-url: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
     tags:
       - development
 ```
 
-Client applications (= applications which embed appswitcher-servers webpage) can request specific tags by adding a corresponding query parameter `tags`. For example, if you embed the appswitcher in a developer-centric web application, you could request only apps which are tagged with `development`:
+Client applications (= applications that embed the appswitcher server web page) can request specific tags by using the query parameter `tags`. For example, if you embed the appswitcher in a development centric web application, the client application could request only apps tagged with `development` by using the following url as IFrame `src`:
 
     https://appswitcher.mycompany.org?tags=development
 
-You can also request multiple tags (e.g. `?tags=development,finance`). This way, every application gets included which has any of the requested tags.
+Client applications can also request multiple tags (e.g. `?tags=development,finance`). This way, an application will be included if it has any of the requested tags.
 
-If a client application requests no specific tags, **by default** only applications which are tagged as `global` are included.
+If a client application does not specify any tags, **by default** only applications tagged as `global` will be included.
 
 ### Keycloak integration
 
-If your are using [Keycloak](https://www.keycloak.org/) with OpenID for access management and Single-Sign-On in your environment, you can additionally add (multiple) Client ID(s) to applications which use Keycloak/OpenID for access management.
+If you are using [Keycloak](https://www.keycloak.org/) with OpenID for access management and single sign-on in your environment, you can also add (multiple) client ID(s) to applications that use Keycloak/OpenID for access management.
 
 ```yml
 appswitcher.apps:
   finance:
     display-name: Finance Reports
     url: https://finance.mycompany.com
-    image-path: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
+    image-url: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
     client-id:
       - finance
 ```
 
-With this configuration, a icon-base hyperlink to the "Finance Reports" web application will only be included if the current users access token claim `audience` contains the client id (and [the tags are matching](#tags) the requested tags). This is based on the [Audience Support](https://www.keycloak.org/docs/latest/server_admin/#audience-support) in Keycloak.
-Using the Keycloak integration you can "hide" web applications, to which the current user has no permission.
+With this configuration, an icon-based hyperlink to the "Finance Reports" web application will only be included if the current user's access token claim `audience` contains the client id (and [the tags match](#tags) the requested tags). This is based on the [Audience Support](https://www.keycloak.org/docs/latest/server_admin/#audience-support) in Keycloak.
 
-Keycloak integration is disabled by default. If enabled, appswitcher-server acts as a OpenID client application requiring a valid SSO session to retrieve an access token of the user.
+When using the Keycloak integration you can only include web applications that the current user has a permission to access.
 
-This integration works best if your users operating system propagates a session to the browser and therefore Keycloak, for example Kerberos on Windows.
+Keycloak integration is disabled by default. When enabled, appswitcher-server acts as an OpenID client application to retrieve a user's access token.
 
-To make the Keycloak integration work properly, there are a couple of caveats (IFrame and Cookies, X-Frame-Options) to be aware of. See the Wiki :construction: for more details. 
+This integration works best if your user's operating system propagates a session to the browser and therefore Keycloak, for example Kerberos on Windows.
+
+For the Keycloak integration to work properly, there are a few caveats (IFrame and cookies, X-Frame-Options) to be aware of. See the [wiki page](https://github.com/it-at-m/appswitcher-server/wiki/IFrame-caveats) for more details. 
  
 ## Configuration
  
-appswitcher-server is a Spring Boot application and therefore it can be configured via [Spring environment abstraction](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config).
+appswitcher-server is a Spring Boot application and can therefore be configured using the [Spring environment abstraction](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config).
 
 | Environment variable  | System/Spring property  | Description | Default value |
 | --------------------- | ----------------------- | ----------- | ------------- |
-| SPRING_PROFILES_ACTIVE | `spring.profiles.active` | Comma seperated list of Spring profiles to activate (e.g. `keycloak`) | `` |
+| SPRING_PROFILES_ACTIVE | `spring.profiles.active` | Comma seperated list of Spring profiles to activate (e.g. `keycloak`) | |
+| APPSWITCHER_APPS | `appswitcher.apps` | Map with applications (see [Features](#features)) | |
 
-:construction: TODO
 
 ### Keycloak integration
 
-Keycloak integration can be enabled by activating the Spring profile `keycloak` (see `SPRING_PROFILES_ACTIVE` in [Configuration](#configuration)).
+Keycloak integration can be enabled by enabling the Spring profile `keycloak` (see `SPRING_PROFILES_ACTIVE` in [Configuration](#configuration)).
 
 | Environment variable  | System/Spring property  | Description | Default value |
 | --------------------- | ----------------------- | ----------- | ------------- |
-
-:construction: TODO
+| `APPSWITCHER_KEYCLOAK_CLIENT_ID` | `appswitcher.keycloak.clientId` | Client ID of the appswitcher itself. | |
+| `APPSWITCHER_KEYCLOAK_CLIENT_SECRET` | `appswitcher.keycloak.client-secret` | Client secret. | |
+| `APPSWITCHER_KEYCLOAK_ISSUER_URI` | `appswitcher.keycloak.issuer-uri` | Issuer uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm') | |
+| `APPSWITCHER_KEYCLOAK_JWK_SET_URI` | `appswitcher.keycloak.jwk-set-uri` | JWK set uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm/protocol/openid-connect/certs' |   |
+| `APPSWITCHER_KEYCLOAK_SCOPES` | `appswitcher.keycloak.scopes` | Comma-seperated list of requested scopes (e.g. 'openid,roles'). |  |
+| `APPSWITCHER_KEYCLOAK_SSO_SESSION_MAX` | `appswitcher.keycloak.sso-session-max` | Maximum time in seconds before keycloak expires the sso sessions (e.g. '36000' for 10 hours). | |
 
 ## Using
 
-:construction: TODO
+### Docker
 
-You can use the official Container image [itatm/appswitcher-server](https://hub.docker.com/r/itatm/appswitcher-server).
+You can use the official container image [itatm/appswitcher-server](https://hub.docker.com/r/itatm/appswitcher-server). To provide your [custom Applications](#custom-applications) create a custom `application.yml` containing your applications under the key `appswitcher.apps.*` and mount the file as a volume at `/deployments/config/application.yaml`.
 
-:construction: TODO
+### Kubernetes
 
 If you want to deploy appswitcher-server on a Kubernetes cluster, you can use the provided Helm chart. See [appswitcher-server-helm-chart][helm-chart-github] for more information and documentation.
 
@@ -127,12 +130,17 @@ This project is built with technologies we use in our projects:
 - Maven
 - Spring Boot
 
-
-```bash
+Build:
+```
 mvn clean install
+```
 
+Run:
+```
 mvn spring-boot:run -Dspring-boot.run.profiles=demo
 ```
+
+Visit <http://localhost:8080> to see the generated application link list with the `demo` applications.
 
 ## Contributing
 
