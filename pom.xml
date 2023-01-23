@@ -227,6 +227,44 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>ghcr</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<docker>
+								<publishRegistry>
+									<username>${env.GHCR_USERNAME}</username>
+									<token>${env.GHCR_TOKEN}</token>
+								</publishRegistry>
+							</docker>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>dockerhub</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<docker>
+								<publishRegistry>
+									<username>${env.DOCKERHUB_USERNAME}</username>
+									<token>${env.DOCKERHUB_TOKEN}</token>
+								</publishRegistry>
+							</docker>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<licenses>
