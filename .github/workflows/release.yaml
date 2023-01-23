@@ -17,6 +17,10 @@ on:
       development-version:
         description: "Development version ?"
         required: true
+      latest-image:
+        description: "Tag image as 'latest' (y/n) ?"
+        required: true
+        default: "y"
 
 jobs:
   prepare-release:
@@ -51,8 +55,6 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
-      - name: Build with Maven
-        run: mvn -B package -DskipTests
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -61,23 +63,18 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: itatm/appswitcher-server
+          images: docker.io/itatm/appswitcher-server
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_KEY }}
-      - name: Build image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
+      - name: Build with Maven
+        env:
+          IMAGE_NAME: docker.io/itatm/appswitcher-server
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          REGISTRY_TOKEN: ${{ secrets.DOCKERHUB_KEY }}
+        run: >
+          mvn -B -ntp -P build-image,publish verify -Dspring-boot.build-image.publish=true
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1

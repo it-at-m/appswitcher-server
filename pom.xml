@@ -40,6 +40,7 @@
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<image.name>itatm/${project.artifactId}:${project.version}</image.name>
 	</properties>
 
 	<dependencies>
@@ -191,6 +192,64 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>build-image</id>
+			<properties>
+				<image.name>${env.IMAGE_NAME}</image.name>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<name>${image.name}:${project.version}</name>
+								<env>
+									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
+									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
+									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
+								</env>
+								<tags>${env.IMAGE_TAGS}</tags>
+							</image>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-image</id>
+								<goals>
+									<goal>build-image-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>publish</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<publish>true</publish>
+							</image>
+							<docker>
+								<publishRegistry>
+									<username>${env.REGISTRY_USER}</username>
+									<password>${env.REGISTRY_TOKEN}</password>
+								</publishRegistry>
+							</docker>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<licenses>
 		<license>
