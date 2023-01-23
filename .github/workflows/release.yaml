@@ -38,8 +38,12 @@ jobs:
           java-version: 17
           distribution: "temurin"
       - name: Perform maven release
-        run: |
-          mvn -B release:prepare -Dtag=${{ github.event.inputs.release-tag }} -DreleaseVersion=${{ github.event.inputs.release-version }} -DdevelopmentVersion=${{ github.event.inputs.development-version }} -Darguments="-DskipTests"
+        run: >
+          mvn -B -ntp release:prepare 
+          -DreleaseVersion=${{ github.event.inputs.release-version }} 
+          -DdevelopmentVersion=${{ github.event.inputs.development-version }} 
+          -Dtag=${{ github.event.inputs.release-tag }} 
+          -Darguments="-DskipTests"
 
   publish-image:
     needs: prepare-release
