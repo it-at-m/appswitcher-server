@@ -17,6 +17,10 @@ on:
       development-version:
         description: "Development version ?"
         required: true
+      latest-image:
+        description: "Tag image as 'latest' (y/n) ?"
+        required: true
+        default: "y"
 
 jobs:
   prepare-release:
@@ -62,6 +66,7 @@ jobs:
           images: docker.io/itatm/appswitcher-server
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
+            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
       - name: Build with Maven
         env:
           IMAGE_NAME: docker.io/itatm/appswitcher-server
