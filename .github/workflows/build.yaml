@@ -52,7 +52,12 @@ jobs:
             type=sha
             type=ref,event=branch
       - name: Build with Maven
-        run: mvn -B -P build-image verify -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }} -Dspring-boot.build-image.publish=true
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}
+          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+        run: >
+          mvn -B -P build-image verify -Dspring-boot.build-image.publish=true
+          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
       # - name: Build image
       #   uses: docker/build-push-action@v3
       #   with:
