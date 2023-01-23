@@ -66,11 +66,10 @@ jobs:
         env:
           IMAGE_NAME: docker.io/itatm/appswitcher-server
           IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_KEY }}
+          REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          REGISTRY_TOKEN: ${{ secrets.DOCKERHUB_KEY }}
         run: >
-          mvn -B -P build-image,dockerhub verify -Dspring-boot.build-image.publish=true
-          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+          mvn -B -ntp -P build-image,publish verify -Dspring-boot.build-image.publish=true
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1

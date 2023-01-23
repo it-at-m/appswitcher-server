@@ -49,8 +49,7 @@ jobs:
         env:
           IMAGE_NAME: ghcr.io/${{ github.repository }}
           IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
-          GHCR_USERNAME: ${{ github.repository_owner }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USER: ${{ github.repository_owner }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          mvn -B -e -X -P build-image,ghcr verify -Dspring-boot.build-image.publish=true 
-          -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
+          mvn -B -ntp -P build-image,publish verify
