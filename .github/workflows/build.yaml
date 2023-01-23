@@ -33,8 +33,6 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: "maven"
-      - name: Build with Maven
-        run: mvn -B verify -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -53,12 +51,14 @@ jobs:
           tags: |
             type=sha
             type=ref,event=branch
-      - name: Build image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Build with Maven
+        run: mvn -B -P build-image verify -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository }} -Dspring-boot.build-image.publish=true
+      # - name: Build image
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max

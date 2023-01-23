@@ -192,6 +192,38 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>build-image</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<name>itatm/${project.artifactId}:${project.version}</name>
+								<env>
+									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
+									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
+									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
+								</env>
+							</image>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-image</id>
+								<goals>
+									<goal>build-image-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<licenses>
 		<license>
 			<name>MIT License</name>
