@@ -1,2 +1,0 @@
-ghcr.io/it-at-m/appswitcher-server:main
-ghcr.io/it-at-m/appswitcher-server:sha-039065e

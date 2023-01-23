@@ -70,11 +70,14 @@ jobs:
       - name: Build with Maven
         env:
           IMAGE_NAME: docker.io/itatm/appswitcher-server
-          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
           REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
           REGISTRY_TOKEN: ${{ secrets.DOCKERHUB_KEY }}
-        run: >
-          mvn -B -ntp -P build-image,publish verify -Dspring-boot.build-image.publish=true
+          LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
+        run: |
+          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
+          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,docker.io/itatm/appswitcher-server:latest; fi
+          mvn -B -ntp -P build-image,publish verify
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
