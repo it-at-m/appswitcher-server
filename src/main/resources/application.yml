@@ -76,3 +76,13 @@ spring:
 logging:
   level:
     '[de.muenchen.oss.appswitcher]': DEBUG
+    
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - jsonlogging
+    
+  main:
+    banner-mode: off
