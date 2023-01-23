@@ -237,6 +237,7 @@
 						<configuration>
 							<docker>
 								<publishRegistry>
+									<url>https://ghcr.io/v1/</url>
 									<username>${env.GHCR_USERNAME}</username>
 									<token>${env.GHCR_TOKEN}</token>
 								</publishRegistry>
