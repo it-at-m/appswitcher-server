@@ -48,8 +48,9 @@ jobs:
       - name: Build with Maven
         env:
           IMAGE_NAME: ghcr.io/${{ github.repository }}
-          IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
           REGISTRY_USER: ${{ github.repository_owner }}
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >
+        run: |
+          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           mvn -B -ntp -P build-image,publish verify
