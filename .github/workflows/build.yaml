@@ -52,5 +52,5 @@ jobs:
           GHCR_USERNAME: ${{ github.repository_owner }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          mvn -B -P build-image,ghcr verify -Dspring-boot.build-image.publish=true 
+          mvn -B -e -X -P build-image,ghcr verify -Dspring-boot.build-image.publish=true 
           -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN
