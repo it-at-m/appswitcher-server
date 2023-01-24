@@ -92,3 +92,11 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
+      - name: Update Docker Hub Description
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_KEY }}
+          repository: itatm/appswitcher-server
+          readme-filepath: ./IMAGE_README.md
+          short-description: ${{ github.event.repository.description }}
