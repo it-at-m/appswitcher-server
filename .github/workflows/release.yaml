@@ -48,6 +48,8 @@ jobs:
   publish-image:
     needs: prepare-release
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - name: checkout release tag
         uses: actions/checkout@v3

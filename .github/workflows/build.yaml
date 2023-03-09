@@ -23,6 +23,8 @@ jobs:
   build-maven:
     needs: compliance
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@v3
       - name: Inject slug/short variables
