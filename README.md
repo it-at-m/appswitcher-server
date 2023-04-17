@@ -120,7 +120,7 @@ You can use the official container image [itatm/appswitcher-server](https://hub.
 
 ### Kubernetes
 
-If you want to deploy appswitcher-server on a Kubernetes cluster, you can use the provided Helm chart. See [appswitcher-server-helm-chart][helm-chart-github] for more information and documentation.
+If you want to deploy appswitcher-server on a Kubernetes cluster, you can use the [official Helm chart][helm-chart-github].
 
 ## Build & Development
 
@@ -179,4 +179,4 @@ it@M - opensource@muenchen.de
 [github-workflow-status-url]: https://github.com/it-at-m/appswitcher-server/actions/workflows/build.yaml
 [release-shield]: https://img.shields.io/github/v/release/it-at-m/appswitcher-server?sort=semver&style=for-the-badge
 [release-url]: https://github.com/it-at-m/appswitcher-server/releases
-[helm-chart-github]: https://github.com/it-at-m/appswitcher-server-helm-chart
+[helm-chart-github]: https://artifacthub.io/packages/helm/it-at-m/appswitcher-server
