@@ -22,6 +22,11 @@ The web page of appswitcher-server will be embedded (mostly by using an `iframe`
 
 ![Screenshot of appswitcher-servers webpage embedded in a web application's app bar](docs/embedded_in_applications.png)
 
+If you are using Vue.js/Vuetify or Vaadin Flow to build your frontends, there are already pre-built components which allow integrating the `iframe` very quickly:
+
+- <https://github.com/it-at-m/appswitcher-vue>
+- <https://github.com/it-at-m/appswitcher-vaadin>
+
 ## Features
 
 ### Custom applications
