@@ -9,19 +9,21 @@ on:
 jobs:
   compliance:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # for checkout
+      security-events: read # to get dependencies for compliance even on PRs
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Advance Security Policy as Code
-        uses: advanced-security/policy-as-code@v2.3
+        uses: advanced-security/policy-as-code@v2.4.1
         with:
-          policy-path: .github/policies/default.yml
+          policy: it-at-m/policy-as-code
+          policy-path: default.yaml
           token: ${{ secrets.GITHUB_TOKEN }}
-          argvs: "--disable-dependabot --disable-secret-scanning"
-          # argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning"
+          argvs: "--disable-dependabot --disable-secret-scanning --disable-code-scanning --display"
 
   build-maven:
-    needs: compliance
     runs-on: ubuntu-latest
     permissions:
       packages: write
