@@ -48,27 +48,27 @@ import de.muenchen.oss.appswitcher.service.AppMatchingService;
 @ActiveProfiles("keycloak")
 class AppswitcherControllerMockKeycloakTest {
 
-	@Autowired
-	private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-	@MockBean
-	private ClientRegistrationRepository clientRegistrationRepository;
+    @MockBean
+    private ClientRegistrationRepository clientRegistrationRepository;
 
-	@MockBean
-	private JwtDecoder jwtDecoder;
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
-	@MockBean
-	private AppMatchingService service;
+    @MockBean
+    private AppMatchingService service;
 
-	@Test
-	@WithOAuth2User
-	void testAuthenticated() throws Exception {
-		this.mockMvc.perform(get("/").param("tags", "rbs,global")).andDo(print()).andExpect(status().isOk());
-	}
+    @Test
+    @WithOAuth2User
+    void testAuthenticated() throws Exception {
+        this.mockMvc.perform(get("/").param("tags", "rbs,global")).andDo(print()).andExpect(status().isOk());
+    }
 
-	@Test
-	void testUnauthenticated() throws Exception {
-		this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().is3xxRedirection());
-	}
+    @Test
+    void testUnauthenticated() throws Exception {
+        this.mockMvc.perform(get("/")).andDo(print()).andExpect(status().is3xxRedirection());
+    }
 
 }

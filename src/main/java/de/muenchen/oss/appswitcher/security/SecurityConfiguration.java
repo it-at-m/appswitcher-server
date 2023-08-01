@@ -42,10 +42,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-	@Bean
-	@Profile("keycloak")
-	public SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
-		// @formatter:off
+    @Bean
+    @Profile("keycloak")
+    public SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
+        // @formatter:off
 		configureBase(http);
 		http
 			.authorizeHttpRequests()
@@ -53,28 +53,28 @@ public class SecurityConfiguration {
 				.anyRequest().authenticated()
 			.and().oauth2Login();
 		// @formatter:on
-		return http.build();
-	}
+        return http.build();
+    }
 
-	@Bean
-	@Profile("!keycloak")
-	public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
-		configureBase(http);
-		http.authorizeHttpRequests().anyRequest().permitAll();
-		return http.build();
-	}
+    @Bean
+    @Profile("!keycloak")
+    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+        configureBase(http);
+        http.authorizeHttpRequests().anyRequest().permitAll();
+        return http.build();
+    }
 
-	@Bean
-	@Profile("keycloak")
-	public JwtDecoder jwtDecoderByIssuerUri(@Value("${appswitcher.keycloak.jwk-set-uri}") String jwkSetUri) {
-		NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
-		OAuth2TokenValidator<Jwt> delegatingValidator = new DelegatingOAuth2TokenValidator<>();
-		decoder.setJwtValidator(delegatingValidator);
-		return decoder;
-	}
+    @Bean
+    @Profile("keycloak")
+    public JwtDecoder jwtDecoderByIssuerUri(@Value("${appswitcher.keycloak.jwk-set-uri}") String jwkSetUri) {
+        NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+        OAuth2TokenValidator<Jwt> delegatingValidator = new DelegatingOAuth2TokenValidator<>();
+        decoder.setJwtValidator(delegatingValidator);
+        return decoder;
+    }
 
-	private void configureBase(HttpSecurity http) throws Exception {
-		http.csrf().disable().headers().frameOptions().disable().and().cors();
-	}
+    private void configureBase(HttpSecurity http) throws Exception {
+        http.csrf().disable().headers().frameOptions().disable().and().cors();
+    }
 
 }

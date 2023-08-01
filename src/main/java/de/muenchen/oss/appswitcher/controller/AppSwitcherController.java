@@ -39,18 +39,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AppSwitcherController {
 
-	public static final String TAG_GLOBAL = "global";
+    public static final String TAG_GLOBAL = "global";
 
-	private final AppswitcherProperties props;
-	private final SessionBean sessionBean;
-	private final AppMatchingService service;
+    private final AppswitcherProperties props;
+    private final SessionBean sessionBean;
+    private final AppMatchingService service;
 
-	@GetMapping("/")
-	public String greeting(@RequestParam(required = false, defaultValue = TAG_GLOBAL) List<String> tags,
-			OAuth2AuthenticationToken authentication, Model model) {
-		model.addAttribute("apps", service.erzeugeAppliste(tags, this.props, sessionBean.getAudClaims()));
-		return "appswitcher";
+    @GetMapping("/")
+    public String greeting(@RequestParam(required = false, defaultValue = TAG_GLOBAL) List<String> tags,
+            OAuth2AuthenticationToken authentication, Model model) {
+        model.addAttribute("apps", service.erzeugeAppliste(tags, this.props, sessionBean.getAudClaims()));
+        return "appswitcher";
 
-	}
+    }
 
 }

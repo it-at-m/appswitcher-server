@@ -40,70 +40,70 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AppMatchingService {
 
-	/**
-	 * Methode Wertet die Rechte des ResourceAccess aus und gibt eine Map mit den
-	 * Anwendungen zurück die angezeigt werden sollen.
-	 * 
-	 * @param requestTags              Apps mit diesen Tags sollen angezeigt werden.
-	 * @param props                    Liste der Well-Known Anwendungen
-	 * @param clientIdAccessListOfUser clientId Prop aus aud des Users
-	 * @return {@link Map} mit Apps die angezeigt werden sollen
-	 */
-	public Map<String, AppConfigurationProperties> erzeugeAppliste(List<String> requestTags,
-			AppswitcherProperties props, List<String> clientIdAccessListOfUser) {
-		Map<String, AppConfigurationProperties> appMap = new LinkedHashMap<>();
-		if (props.getApps() != null) {
-			for (Entry<String, AppConfigurationProperties> app : props.getApps().entrySet()) {
-				List<String> appTags = app.getValue().getTags();
-				if (appTags == null) {
-					log.debug("-- Skipping app with no Tags [{}]", app);
-					continue;
-				}
-				// Alle Globals hinzufügen wenn angefordert
-				if (requestTags.contains(TAG_GLOBAL) && appTags.contains(TAG_GLOBAL)) {
-					appMap.put(app.getKey(), app.getValue());
-					log.debug("-- Adding Global app [{}]", app);
-				} else {
-					// Füge Referatsicons hinzu wenn in Tags angefordert und Recht in aud des
-					// access-token
-					// vorhanden
-					boolean hasMatchingTag = requestTags.stream()
-							.anyMatch(appTags.stream().collect(Collectors.toSet())::contains);
-					// Verwerfe weil kein passendes Tag angefordert
-					if (!hasMatchingTag) {
-						log.debug("-- Skipping app. No matching Tag [{}]", app);
-						continue;
-					}
-					// Verwerfe weil clientId gesetzt, der user dieses Recht aber nicht hat
-					if (!hasMatchingResourceAccess(app.getValue().getClientId(), clientIdAccessListOfUser)) {
-						log.debug("-- Skipping app. No matching clientId access [{}]", app);
-						continue;
-					}
-					log.debug("-- Adding Referats app [{}]", app);
-					appMap.put(app.getKey(), app.getValue());
-				}
-			}
-		}
+    /**
+     * Methode Wertet die Rechte des ResourceAccess aus und gibt eine Map mit den
+     * Anwendungen zurück die angezeigt werden sollen.
+     *
+     * @param requestTags Apps mit diesen Tags sollen angezeigt werden.
+     * @param props Liste der Well-Known Anwendungen
+     * @param clientIdAccessListOfUser clientId Prop aus aud des Users
+     * @return {@link Map} mit Apps die angezeigt werden sollen
+     */
+    public Map<String, AppConfigurationProperties> erzeugeAppliste(List<String> requestTags,
+            AppswitcherProperties props, List<String> clientIdAccessListOfUser) {
+        Map<String, AppConfigurationProperties> appMap = new LinkedHashMap<>();
+        if (props.getApps() != null) {
+            for (Entry<String, AppConfigurationProperties> app : props.getApps().entrySet()) {
+                List<String> appTags = app.getValue().getTags();
+                if (appTags == null) {
+                    log.debug("-- Skipping app with no Tags [{}]", app);
+                    continue;
+                }
+                // Alle Globals hinzufügen wenn angefordert
+                if (requestTags.contains(TAG_GLOBAL) && appTags.contains(TAG_GLOBAL)) {
+                    appMap.put(app.getKey(), app.getValue());
+                    log.debug("-- Adding Global app [{}]", app);
+                } else {
+                    // Füge Referatsicons hinzu wenn in Tags angefordert und Recht in aud des
+                    // access-token
+                    // vorhanden
+                    boolean hasMatchingTag = requestTags.stream()
+                            .anyMatch(appTags.stream().collect(Collectors.toSet())::contains);
+                    // Verwerfe weil kein passendes Tag angefordert
+                    if (!hasMatchingTag) {
+                        log.debug("-- Skipping app. No matching Tag [{}]", app);
+                        continue;
+                    }
+                    // Verwerfe weil clientId gesetzt, der user dieses Recht aber nicht hat
+                    if (!hasMatchingResourceAccess(app.getValue().getClientId(), clientIdAccessListOfUser)) {
+                        log.debug("-- Skipping app. No matching clientId access [{}]", app);
+                        continue;
+                    }
+                    log.debug("-- Adding Referats app [{}]", app);
+                    appMap.put(app.getKey(), app.getValue());
+                }
+            }
+        }
 
-		return appMap;
-	}
+        return appMap;
+    }
 
-	private boolean hasMatchingResourceAccess(List<String> clientIdAccessOfApp, List<String> clientIdListOfUser) {
-		if (clientIdAccessOfApp == null || clientIdAccessOfApp.isEmpty()) {
-			// keine clientId Beschränkung
-			return true;
-		}
-		if (clientIdListOfUser == null || clientIdListOfUser.isEmpty()) {
-			// die App hat eine Beschränkung und der User hat gar keine clientId
-			return false;
-		}
-		// check Listen auf Match
-		for (String userAccess : clientIdListOfUser) {
-			if (clientIdAccessOfApp.contains(userAccess)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean hasMatchingResourceAccess(List<String> clientIdAccessOfApp, List<String> clientIdListOfUser) {
+        if (clientIdAccessOfApp == null || clientIdAccessOfApp.isEmpty()) {
+            // keine clientId Beschränkung
+            return true;
+        }
+        if (clientIdListOfUser == null || clientIdListOfUser.isEmpty()) {
+            // die App hat eine Beschränkung und der User hat gar keine clientId
+            return false;
+        }
+        // check Listen auf Match
+        for (String userAccess : clientIdListOfUser) {
+            if (clientIdAccessOfApp.contains(userAccess)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

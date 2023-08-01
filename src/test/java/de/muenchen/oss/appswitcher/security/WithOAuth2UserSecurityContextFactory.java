@@ -38,30 +38,30 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 import lombok.Data;
 
 public class WithOAuth2UserSecurityContextFactory
-		implements WithSecurityContextFactory<WithOAuth2User> {
+        implements WithSecurityContextFactory<WithOAuth2User> {
 
-	@Override
-	public SecurityContext createSecurityContext(WithOAuth2User user) {
-		SecurityContext context = SecurityContextHolder.createEmptyContext();
+    @Override
+    public SecurityContext createSecurityContext(WithOAuth2User user) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-		CustomUserDetails principal = new CustomUserDetails();
-		Authentication auth = new OAuth2AuthenticationToken(principal, principal.getAuthorities(), "121412414");
-		context.setAuthentication(auth);
-		return context;
-	}
+        CustomUserDetails principal = new CustomUserDetails();
+        Authentication auth = new OAuth2AuthenticationToken(principal, principal.getAuthorities(), "121412414");
+        context.setAuthentication(auth);
+        return context;
+    }
 
-	@Data
-	public class CustomUserDetails implements OAuth2User {
-		String name = "appswitcher-name";
-		String username = "appswitcher-username";
-		List<GrantedAuthority> authorities = Collections.emptyList();
+    @Data
+    public class CustomUserDetails implements OAuth2User {
+        String name = "appswitcher-name";
+        String username = "appswitcher-username";
+        List<GrantedAuthority> authorities = Collections.emptyList();
 
-		@Override
-		public Map<String, Object> getAttributes() {
-			Map<String, Object> attr = new HashMap<>();
-			return attr;
-		}
+        @Override
+        public Map<String, Object> getAttributes() {
+            Map<String, Object> attr = new HashMap<>();
+            return attr;
+        }
 
-	}
+    }
 
 }
