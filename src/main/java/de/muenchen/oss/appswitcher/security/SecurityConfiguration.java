@@ -22,11 +22,12 @@
  */
 package de.muenchen.oss.appswitcher.security;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -45,29 +46,25 @@ public class SecurityConfiguration {
 
     @Bean
     @Profile("keycloak")
-    public SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
-        // @formatter:off
-		configureBase(http);
-		http
-			.authorizeHttpRequests(authz -> authz
-				.requestMatchers("/actuator/info", "/actuator/health","/actuator/health/**").permitAll()
-				.anyRequest().authenticated()
-			).oauth2Login(Customizer.withDefaults());
-		// @formatter:on
+    SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
+        configureBase(http);
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                .requestMatchers("/actuator/info", "/actuator/health", "/actuator/health/**").permitAll().anyRequest()
+                .authenticated()).oauth2Login(withDefaults());
         return http.build();
     }
 
     @Bean
     @Profile("!keycloak")
-    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         configureBase(http);
-        http.authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.anyRequest().permitAll());
         return http.build();
     }
 
     @Bean
     @Profile("keycloak")
-    public JwtDecoder jwtDecoderByIssuerUri(@Value("${appswitcher.keycloak.jwk-set-uri}") String jwkSetUri) {
+    JwtDecoder jwtDecoderByIssuerUri(@Value("${appswitcher.keycloak.jwk-set-uri}") String jwkSetUri) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
         OAuth2TokenValidator<Jwt> delegatingValidator = new DelegatingOAuth2TokenValidator<>();
         decoder.setJwtValidator(delegatingValidator);

@@ -40,7 +40,7 @@
 		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<image.name>itatm/${project.artifactId}:${project.version}</image.name>
+		<image.name>itatm/${project.artifactId}</image.name>
 	</properties>
 
 	<dependencies>
@@ -116,6 +116,11 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- native image building -->
+			<plugin>
+				<groupId>org.graalvm.buildtools</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -176,6 +181,7 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<phase>test</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -211,6 +217,7 @@
 						<goals>
 							<goal>check</goal>
 						</goals>
+						<phase>test</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -247,10 +254,33 @@
 
 	<profiles>
 		<profile>
-			<id>build-image</id>
+			<id>lhm</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<docker>
+								<builderRegistry>
+									<username>${env.DOCKERHUB_USERNAME}</username>
+									<password>${env.DOCKERHUB_PASSWORD}</password>
+									<url>https://index.docker.io/v1/</url>
+								</builderRegistry>
+							</docker>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>ci</id>
 			<properties>
 				<image.name>${env.IMAGE_NAME}</image.name>
 			</properties>
+		</profile>
+		<profile>
+			<id>build-image</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -265,13 +295,14 @@
 									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
 									<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
 								</env>
+								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
 								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 								<buildpacks>
 									<buildpack>
 										urn:cnb:builder:paketo-buildpacks/java</buildpack>
 									<buildpack>
-										gcr.io/paketo-buildpacks/health-checker:latest</buildpack>
+										docker.io/paketobuildpacks/health-checker:latest</buildpack>
 								</buildpacks>
 							</image>
 						</configuration>
@@ -281,6 +312,66 @@
 								<goals>
 									<goal>build-image-no-fork</goal>
 								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native-image</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<name>${image.name}:${project.version}</name>
+								<env>
+									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
+									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
+									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
+									<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
+								</env>
+								<verboseLogging>true</verboseLogging>
+								<tags>${env.IMAGE_TAGS}</tags>
+								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
+								<buildpacks>
+									<buildpack>
+										urn:cnb:builder:paketo-buildpacks/java</buildpack>
+									<buildpack>
+										urn:cnb:builder:paketo-buildpacks/native-image</buildpack>
+									<buildpack>
+										docker.io/paketobuildpacks/health-checker:latest</buildpack>
+								</buildpacks>
+							</image>
+						</configuration>
+						<executions>
+							<execution>
+								<id>build-image</id>
+								<goals>
+									<goal>build-image-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>keycloak</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>process-aot</id>
+								<configuration>
+									<profiles>keycloak</profiles>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>
