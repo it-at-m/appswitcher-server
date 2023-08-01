@@ -74,7 +74,7 @@ jobs:
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
             ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
-      - name: Build with Maven
+      - name: Build image
         env:
           IMAGE_NAME: ghcr.io/${{ github.repository }}
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
@@ -84,7 +84,29 @@ jobs:
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,ghcr.io/it-at-m/appswitcher-server:latest; fi
-          mvn -B -ntp -DskipTests -P build-image,publish verify
+          mvn -B -ntp -DskipTests -P ci,build-image,publish verify
+      - name: Build native image (default profile)
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}-native
+          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
+          REGISTRY_USER: ${{ github.repository_owner }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
+        run: |
+          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
+          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,$IMAGE_NAME:latest; fi
+          mvn -B -ntp -DskipTests -P ci,native,build-native-image,publish verify
+      - name: Build native image  (keycloak profile)
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository }}-native-keycloak
+          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
+          REGISTRY_USER: ${{ github.repository_owner }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
+        run: |
+          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
+          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,$IMAGE_NAME:latest; fi
+          mvn -B -ntp -DskipTests -P ci,keycloak,native,build-native-image,publish verify
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
