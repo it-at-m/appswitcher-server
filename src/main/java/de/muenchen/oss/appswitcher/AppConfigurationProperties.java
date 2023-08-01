@@ -34,25 +34,25 @@ import lombok.Data;
 @ConfigurationProperties
 public class AppConfigurationProperties {
 
-	/**
-	 * Name of the application.
-	 */
-	String displayName;
-	/**
-	 * URL for the applications image/icon.
-	 */
-	String imageUrl;
-	/**
-	 * URL of the application, will be used for the hyperlink.
-	 */
-	String url;
-	/**
-	 * Client ID(s) of the application.
-	 */
-	List<String> clientId;
-	/**
-	 * List of tags of the application.
-	 */
-	List<String> tags;
+    /**
+     * Name of the application.
+     */
+    String displayName;
+    /**
+     * URL for the applications image/icon.
+     */
+    String imageUrl;
+    /**
+     * URL of the application, will be used for the hyperlink.
+     */
+    String url;
+    /**
+     * Client ID(s) of the application.
+     */
+    List<String> clientId;
+    /**
+     * List of tags of the application.
+     */
+    List<String> tags;
 
 }

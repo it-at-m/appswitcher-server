@@ -35,10 +35,10 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "appswitcher")
 public class AppswitcherProperties {
 
-	@NestedConfigurationProperty
-	private Map<String, AppConfigurationProperties> apps;
+    @NestedConfigurationProperty
+    private Map<String, AppConfigurationProperties> apps;
 
-	@NestedConfigurationProperty
-	private KeycloakConfigurationProperties keycloak;
+    @NestedConfigurationProperty
+    private KeycloakConfigurationProperties keycloak;
 
 }

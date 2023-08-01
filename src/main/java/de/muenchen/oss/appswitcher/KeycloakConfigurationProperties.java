@@ -32,33 +32,34 @@ import lombok.Data;
 @ConfigurationProperties
 public class KeycloakConfigurationProperties {
 
-	/**
-	 * Client ID of the appswitcher itself.
-	 */
-	private String clientId;
-	
-	/**
-	 * Client secret.
-	 */
-	private String clientSecret;
-	
-	/**
-	 * Issuer uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm')
-	 */
-	private String issuerUri;
-	
-	/**
-	 * JWK set uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm/protocol/openid-connect/certs' 
-	 */
-	private String jwkSetUri;
-	
-	/**
-	 * Comma-seperated list of requested scopes (e.g. 'openid,roles').
-	 */
-	private String scopes;
-	
-	/**
-	 * Maximum time in seconds before keycloak expires the sso sessions (e.g. '36000' for 10 hours).
-	 */
-	private String ssoSessionMax;
+    /**
+     * Client ID of the appswitcher itself.
+     */
+    private String clientId;
+
+    /**
+     * Client secret.
+     */
+    private String clientSecret;
+
+    /**
+     * Issuer uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm')
+     */
+    private String issuerUri;
+
+    /**
+     * JWK set uri (e.g.
+     * 'https://keycloak.mycompany.org/auth/realms/myrealm/protocol/openid-connect/certs'
+     */
+    private String jwkSetUri;
+
+    /**
+     * Comma-seperated list of requested scopes (e.g. 'openid,roles').
+     */
+    private String scopes;
+
+    /**
+     * Maximum time in seconds before keycloak expires the sso sessions (e.g. '36000' for 10 hours).
+     */
+    private String ssoSessionMax;
 }

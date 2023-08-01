@@ -43,47 +43,47 @@ import lombok.extern.slf4j.Slf4j;
 @Profile("keycloak")
 public class AuthenticationSuccessListener implements ApplicationListener<AuthenticationSuccessEvent> {
 
-	private JwtDecoder decoder;
-	private SessionBean sessionBean;
+    private JwtDecoder decoder;
+    private SessionBean sessionBean;
 
-	public AuthenticationSuccessListener(JwtDecoder decoder, SessionBean sessionBean) {
-		super();
-		this.decoder = decoder;
-		this.sessionBean = sessionBean;
-	}
+    public AuthenticationSuccessListener(JwtDecoder decoder, SessionBean sessionBean) {
+        super();
+        this.decoder = decoder;
+        this.sessionBean = sessionBean;
+    }
 
-	@Override
-	public void onApplicationEvent(AuthenticationSuccessEvent event) {
-		log.debug("Speichere Aud-Claims in einer SessionBean des Users...");
-		Authentication authentication = event.getAuthentication();
-		List<String> clientIds = getClientIdsFromAud(authentication);
-		sessionBean.setAudClaims(clientIds);
-	}
+    @Override
+    public void onApplicationEvent(AuthenticationSuccessEvent event) {
+        log.debug("Speichere Aud-Claims in einer SessionBean des Users...");
+        Authentication authentication = event.getAuthentication();
+        List<String> clientIds = getClientIdsFromAud(authentication);
+        sessionBean.setAudClaims(clientIds);
+    }
 
-	/**
-	 * Liest den access-token aus der übergebenen authentication aus und extrahiert
-	 * daraus die Client-Ids im aud-Claim.
-	 * 
-	 * @param authentication
-	 * @return Liste mit Aud-Claims des Access-Token
-	 */
-	private List<String> getClientIdsFromAud(Authentication authentication) {
-		log.debug("Extracting aud of access-token...");
-		if (authentication != null) {
-			if (authentication instanceof OAuth2LoginAuthenticationToken oauth) {
-				OAuth2AccessToken accessToken = oauth.getAccessToken();
-				log.trace("Access-Token aus Authentication: {}", accessToken.getTokenValue());
-				Jwt jwt = decoder.decode(accessToken.getTokenValue());
-				List<String> audiences = jwt.getAudience();
-				log.trace("Audiances: {}", audiences);
-				return audiences;
-			} else {
-				log.debug("Token ist keine Instanz von OAuth2LoginAuthenticationToken");
-			}
-		} else {
-			log.debug("No Authentication found");
-		}
-		return Collections.emptyList();
-	}
+    /**
+     * Liest den access-token aus der übergebenen authentication aus und extrahiert
+     * daraus die Client-Ids im aud-Claim.
+     *
+     * @param authentication
+     * @return Liste mit Aud-Claims des Access-Token
+     */
+    private List<String> getClientIdsFromAud(Authentication authentication) {
+        log.debug("Extracting aud of access-token...");
+        if (authentication != null) {
+            if (authentication instanceof OAuth2LoginAuthenticationToken oauth) {
+                OAuth2AccessToken accessToken = oauth.getAccessToken();
+                log.trace("Access-Token aus Authentication: {}", accessToken.getTokenValue());
+                Jwt jwt = decoder.decode(accessToken.getTokenValue());
+                List<String> audiences = jwt.getAudience();
+                log.trace("Audiances: {}", audiences);
+                return audiences;
+            } else {
+                log.debug("Token ist keine Instanz von OAuth2LoginAuthenticationToken");
+            }
+        } else {
+            log.debug("No Authentication found");
+        }
+        return Collections.emptyList();
+    }
 
 }

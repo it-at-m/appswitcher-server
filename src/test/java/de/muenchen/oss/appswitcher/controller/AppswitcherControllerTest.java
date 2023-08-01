@@ -51,55 +51,55 @@ import de.muenchen.oss.appswitcher.session.SessionBean;
 @EnableConfigurationProperties(value = AppswitcherProperties.class)
 class AppswitcherControllerTest {
 
-	@Autowired
-	private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-	@MockBean
-	private SessionBean sessionBean;
+    @MockBean
+    private SessionBean sessionBean;
 
-	@BeforeEach
-	public void before() {
-		Mockito.when(sessionBean.getAudClaims()).thenReturn(List.of("persft", "rbseinr", "rbslog"));
-	}
+    @BeforeEach
+    public void before() {
+        Mockito.when(sessionBean.getAudClaims()).thenReturn(List.of("persft", "rbseinr", "rbslog"));
+    }
 
-	/**
-	 * Testet, dass nur die Links im Response angezeigt werden für die auch ein
-	 * Eintrag in den Properties und im resource_acces der Security vorhanden ist.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	void testGlobalAndTag() throws Exception {
+    /**
+     * Testet, dass nur die Links im Response angezeigt werden für die auch ein
+     * Eintrag in den Properties und im resource_acces der Security vorhanden ist.
+     *
+     * @throws Exception
+     */
+    @Test
+    void testGlobalAndTag() throws Exception {
 
-		this.mockMvc.perform(get("/").param("tags", "rbs,global")).andDo(print()).andExpect(status().isOk())
-				// Ist in den Properties bekannt und im Kontext vorhanden
-				.andExpect(content().string(containsString("appswitcher-rbseinr")))
-				.andExpect(content().string(containsString("appswitcher-rbslog")))
-				// Ist Global
-				.andExpect(content().string(containsString("appswitcher-mail")))
-				// Hat kein angefordertes Tag
-				.andExpect(content().string(not(containsString("appswitcher-persft"))))
-				// hat garkein tag
-				.andExpect(content().string(not(containsString("appswitcher-aura"))))
-				// Hierfür gibt es keinen Eintrag in den Ressourcen des Sec. Kontext wäre aber
-				// in den Properties bekannt. Da User keine Rechte soll das nicht angezeigt
-				// werden.
-				.andExpect(content().string(not(containsString("appswitcher-kfrei"))));
-	}
+        this.mockMvc.perform(get("/").param("tags", "rbs,global")).andDo(print()).andExpect(status().isOk())
+                // Ist in den Properties bekannt und im Kontext vorhanden
+                .andExpect(content().string(containsString("appswitcher-rbseinr")))
+                .andExpect(content().string(containsString("appswitcher-rbslog")))
+                // Ist Global
+                .andExpect(content().string(containsString("appswitcher-mail")))
+                // Hat kein angefordertes Tag
+                .andExpect(content().string(not(containsString("appswitcher-persft"))))
+                // hat garkein tag
+                .andExpect(content().string(not(containsString("appswitcher-aura"))))
+                // Hierfür gibt es keinen Eintrag in den Ressourcen des Sec. Kontext wäre aber
+                // in den Properties bekannt. Da User keine Rechte soll das nicht angezeigt
+                // werden.
+                .andExpect(content().string(not(containsString("appswitcher-kfrei"))));
+    }
 
-	@Test
-	void testNoGlobal() throws Exception {
-		this.mockMvc.perform(get("/").param("tags", "rbs")).andDo(print()).andExpect(status().isOk())
-				// Kein Mail da Global nicht angefordert
-				.andExpect(content().string(not(containsString("appswitcher-mail"))));
-	}
+    @Test
+    void testNoGlobal() throws Exception {
+        this.mockMvc.perform(get("/").param("tags", "rbs")).andDo(print()).andExpect(status().isOk())
+                // Kein Mail da Global nicht angefordert
+                .andExpect(content().string(not(containsString("appswitcher-mail"))));
+    }
 
-	@Test
-	void testTagButNoResourceAccess() throws Exception {
-		this.mockMvc.perform(get("/").param("tags", "rbs")).andDo(print()).andExpect(status().isOk())
-				// kitafinder vorhanden obwohl keine Rolle vorhanden da Tag gesetzt und
-				// resource-access leer
-				.andExpect(content().string(containsString("appswitcher-kitafinder")));
-	}
+    @Test
+    void testTagButNoResourceAccess() throws Exception {
+        this.mockMvc.perform(get("/").param("tags", "rbs")).andDo(print()).andExpect(status().isOk())
+                // kitafinder vorhanden obwohl keine Rolle vorhanden da Tag gesetzt und
+                // resource-access leer
+                .andExpect(content().string(containsString("appswitcher-kitafinder")));
+    }
 
 }

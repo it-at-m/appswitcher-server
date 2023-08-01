@@ -38,47 +38,47 @@ import de.muenchen.oss.appswitcher.service.AppMatchingService;
 
 class AppMatchingServiceTest {
 
-	private AppswitcherProperties props;
-	private AppMatchingService sut;
+    private AppswitcherProperties props;
+    private AppMatchingService sut;
 
-	@BeforeEach
-	public void setUp() {
-		this.props = new AppswitcherProperties();
-		this.props.setApps(buildAppMap());
-		sut = new AppMatchingService();
-	}
+    @BeforeEach
+    public void setUp() {
+        this.props = new AppswitcherProperties();
+        this.props.setApps(buildAppMap());
+        sut = new AppMatchingService();
+    }
 
-	private Map<String, AppConfigurationProperties> buildAppMap() {
-		LinkedHashMap<String, AppConfigurationProperties> map = new LinkedHashMap<>();
-		map.put("wilma", buildApp("Wilma", "http://wilma.com", Arrays.asList("global", "wilma"), null));
-		map.put("telefonbuch", buildApp("Wilma", "http://wilma.com", Arrays.asList("global", "telefonbuch"), null));
-		map.put("rbsaura", buildApp("AuRa", "http://aura.com", Arrays.asList("rbs"), Arrays.asList("rbsaura")));
-		map.put("rbsaura2", buildApp("AuRa2", "http://aura.com", Arrays.asList("kvr"), Arrays.asList("rbsaura")));
-		map.put("kibigweb",
-				buildApp("KiBiG", "http://kibig.com", Arrays.asList("rbs"), Arrays.asList("rbsaura", "rbseinr")));
-		return map;
-	}
+    private Map<String, AppConfigurationProperties> buildAppMap() {
+        LinkedHashMap<String, AppConfigurationProperties> map = new LinkedHashMap<>();
+        map.put("wilma", buildApp("Wilma", "http://wilma.com", Arrays.asList("global", "wilma"), null));
+        map.put("telefonbuch", buildApp("Wilma", "http://wilma.com", Arrays.asList("global", "telefonbuch"), null));
+        map.put("rbsaura", buildApp("AuRa", "http://aura.com", Arrays.asList("rbs"), Arrays.asList("rbsaura")));
+        map.put("rbsaura2", buildApp("AuRa2", "http://aura.com", Arrays.asList("kvr"), Arrays.asList("rbsaura")));
+        map.put("kibigweb",
+                buildApp("KiBiG", "http://kibig.com", Arrays.asList("rbs"), Arrays.asList("rbsaura", "rbseinr")));
+        return map;
+    }
 
-	private AppConfigurationProperties buildApp(String displayName, String url, List<String> tags,
-			List<String> resourceAccess) {
-		AppConfigurationProperties app = new AppConfigurationProperties();
-		app.setDisplayName(displayName);
-		app.setUrl(url);
-		app.setTags(tags);
-		app.setClientId(resourceAccess);
-		return app;
-	}
+    private AppConfigurationProperties buildApp(String displayName, String url, List<String> tags,
+            List<String> resourceAccess) {
+        AppConfigurationProperties app = new AppConfigurationProperties();
+        app.setDisplayName(displayName);
+        app.setUrl(url);
+        app.setTags(tags);
+        app.setClientId(resourceAccess);
+        return app;
+    }
 
-	@Test
-	void test_app_liste_zusammenstellung() {
+    @Test
+    void test_app_liste_zusammenstellung() {
 
-		assertThat(sut.erzeugeAppliste(Arrays.asList("global", "rbs"), this.props, Arrays.asList("rbsaura")))
-				.containsKey("wilma").containsKey("telefonbuch").containsKey("rbsaura").containsKey("kibigweb")
-				.doesNotContainKey("rbsaura2");
+        assertThat(sut.erzeugeAppliste(Arrays.asList("global", "rbs"), this.props, Arrays.asList("rbsaura")))
+                .containsKey("wilma").containsKey("telefonbuch").containsKey("rbsaura").containsKey("kibigweb")
+                .doesNotContainKey("rbsaura2");
 
-		assertThat(sut.erzeugeAppliste(Arrays.asList("telefonbuch", "rbs"), this.props, Arrays.asList("rbsaura")))
-				.doesNotContainKey("wilma").containsKey("telefonbuch").containsKey("rbsaura").containsKey("kibigweb")
-				.doesNotContainKey("rbsaura2");
-	}
+        assertThat(sut.erzeugeAppliste(Arrays.asList("telefonbuch", "rbs"), this.props, Arrays.asList("rbsaura")))
+                .doesNotContainKey("wilma").containsKey("telefonbuch").containsKey("rbsaura").containsKey("kibigweb")
+                .doesNotContainKey("rbsaura2");
+    }
 
 }
