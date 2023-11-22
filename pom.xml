@@ -238,6 +238,7 @@
 									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
 								</env>
 								<tags>${env.IMAGE_TAGS}</tags>
+								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 							</image>
 						</configuration>
 						<executions>
