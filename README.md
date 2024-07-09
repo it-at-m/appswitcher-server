@@ -39,14 +39,15 @@ appswitcher.apps:
     display-name: GitHub
     url: https://github.com/it-at-m
     image-url: https://avatars.githubusercontent.com/u/58515289?s=144&v=4
+    sort-order: 10
 ```
 
-| Property | Description |
-|----------|-------------|
-| `display-name` | Name of the application |
-| `url` | URL of the application, will be used for the hyperlink |
-| `image-url` | URL for the applications image/icon. The image should be quadratic, size  should be between `48x48` and `144x144` pixels. |
-
+| Property       | Description                                                                                                                                            |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `display-name` | Name of the application                                                                                                                                |
+| `url`          | URL of the application, will be used for the hyperlink                                                                                                 |
+| `image-url`    | URL for the applications image/icon. The image should be quadratic, size should be between `48x48` and `144x144` pixels.                               |
+| `sort-order`   | _optional_: Number used for ordering the application in the application listing in ascending order. Applications without an order will be placed last. |
 
 ### Tags
 
@@ -92,30 +93,29 @@ Keycloak integration is disabled by default. When enabled, appswitcher-server ac
 
 This integration works best if your user's operating system propagates a session to the browser and therefore Keycloak, for example Kerberos on Windows.
 
-For the Keycloak integration to work properly, there are a few caveats (IFrame and cookies, X-Frame-Options) to be aware of. See the [wiki page](https://github.com/it-at-m/appswitcher-server/wiki/IFrame-caveats) for more details. 
- 
+For the Keycloak integration to work properly, there are a few caveats (IFrame and cookies, X-Frame-Options) to be aware of. See the [wiki page](https://github.com/it-at-m/appswitcher-server/wiki/IFrame-caveats) for more details.
+
 ## Configuration
- 
+
 appswitcher-server is a Spring Boot application and can therefore be configured using the [Spring environment abstraction](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config).
 
-| Environment variable  | System/Spring property  | Description | Default value |
-| --------------------- | ----------------------- | ----------- | ------------- |
-| SPRING_PROFILES_ACTIVE | `spring.profiles.active` | Comma seperated list of Spring profiles to activate (e.g. `keycloak`) | |
-| APPSWITCHER_APPS | `appswitcher.apps` | Map with applications (see [Features](#features)) | |
-
+| Environment variable   | System/Spring property   | Description                                                           | Default value |
+| ---------------------- | ------------------------ | --------------------------------------------------------------------- | ------------- |
+| SPRING_PROFILES_ACTIVE | `spring.profiles.active` | Comma seperated list of Spring profiles to activate (e.g. `keycloak`) |               |
+| APPSWITCHER_APPS       | `appswitcher.apps`       | Map with applications (see [Features](#features))                     |               |
 
 ### Keycloak integration
 
 Keycloak integration can be enabled by enabling the Spring profile `keycloak` (see `SPRING_PROFILES_ACTIVE` in [Configuration](#configuration)).
 
-| Environment variable  | System/Spring property  | Description | Default value |
-| --------------------- | ----------------------- | ----------- | ------------- |
-| `APPSWITCHER_KEYCLOAK_CLIENT_ID` | `appswitcher.keycloak.clientId` | Client ID of the appswitcher itself. | |
-| `APPSWITCHER_KEYCLOAK_CLIENT_SECRET` | `appswitcher.keycloak.client-secret` | Client secret. | |
-| `APPSWITCHER_KEYCLOAK_ISSUER_URI` | `appswitcher.keycloak.issuer-uri` | Issuer uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm') | |
-| `APPSWITCHER_KEYCLOAK_JWK_SET_URI` | `appswitcher.keycloak.jwk-set-uri` | JWK set uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm/protocol/openid-connect/certs' |   |
-| `APPSWITCHER_KEYCLOAK_SCOPES` | `appswitcher.keycloak.scopes` | Comma-seperated list of requested scopes (e.g. 'openid,roles'). |  |
-| `APPSWITCHER_KEYCLOAK_SSO_SESSION_MAX` | `appswitcher.keycloak.sso-session-max` | Maximum time in seconds before keycloak expires the sso sessions (e.g. '36000' for 10 hours). | |
+| Environment variable                   | System/Spring property                 | Description                                                                                          | Default value |
+| -------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------- |
+| `APPSWITCHER_KEYCLOAK_CLIENT_ID`       | `appswitcher.keycloak.clientId`        | Client ID of the appswitcher itself.                                                                 |               |
+| `APPSWITCHER_KEYCLOAK_CLIENT_SECRET`   | `appswitcher.keycloak.client-secret`   | Client secret.                                                                                       |               |
+| `APPSWITCHER_KEYCLOAK_ISSUER_URI`      | `appswitcher.keycloak.issuer-uri`      | Issuer uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm')                               |               |
+| `APPSWITCHER_KEYCLOAK_JWK_SET_URI`     | `appswitcher.keycloak.jwk-set-uri`     | JWK set uri (e.g. 'https://keycloak.mycompany.org/auth/realms/myrealm/protocol/openid-connect/certs' |               |
+| `APPSWITCHER_KEYCLOAK_SCOPES`          | `appswitcher.keycloak.scopes`          | Comma-seperated list of requested scopes (e.g. 'openid,roles').                                      |               |
+| `APPSWITCHER_KEYCLOAK_SSO_SESSION_MAX` | `appswitcher.keycloak.sso-session-max` | Maximum time in seconds before keycloak expires the sso sessions (e.g. '36000' for 10 hours).        |               |
 
 ## Using
 
@@ -136,11 +136,13 @@ This project is built with technologies we use in our projects:
 - Spring Boot
 
 Build:
+
 ```
 mvn clean install
 ```
 
 Run:
+
 ```
 mvn spring-boot:run -Dspring-boot.run.profiles=demo
 ```
@@ -162,7 +164,6 @@ Don't forget to give the project a star! Thanks again!
 6. Open a Pull Request
 
 We use [itm-java-codeformat](https://github.com/it-at-m/itm-java-codeformat), so please make sure to apply the correct code format for your contributions.
-
 
 ## License
 
