@@ -22,42 +22,27 @@
  */
 package de.muenchen.oss.appswitcher;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import lombok.Data;
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class AppswitcherApplicationTest {
 
-@Data
-@Configuration
-@ConfigurationProperties
-public class AppConfigurationProperties {
+    @Autowired
+    TestRestTemplate testRestTemplate;
 
-    /**
-     * Name of the application.
-     */
-    String displayName;
-    /**
-     * URL for the applications image/icon.
-     */
-    String imageUrl;
-    /**
-     * URL of the application, will be used for the hyperlink.
-     */
-    String url;
-    /**
-     * Client ID(s) of the application.
-     */
-    List<String> clientId;
-    /**
-     * List of tags of the application.
-     */
-    List<String> tags;
-    /**
-     * Number used for ordering the application in the application listing in ascending order.
-     * Applications without an order will be placed last.
-     */
-    Integer sortOrder;
+    @Test
+    void context_starts() {
+        ResponseEntity<String> responseEntity = testRestTemplate.getForEntity("/", String.class);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).contains("title=\"Mail\"");
+    }
 
 }
