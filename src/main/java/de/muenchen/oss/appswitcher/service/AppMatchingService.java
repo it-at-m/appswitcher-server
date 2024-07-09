@@ -22,8 +22,9 @@
  */
 package de.muenchen.oss.appswitcher.service;
 
-import static de.muenchen.oss.appswitcher.controller.AppSwitcherController.TAG_GLOBAL;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,40 +53,57 @@ public class AppMatchingService {
     public Map<String, AppConfigurationProperties> erzeugeAppliste(List<String> requestTags,
             AppswitcherProperties props, List<String> clientIdAccessListOfUser) {
         Map<String, AppConfigurationProperties> appMap = new LinkedHashMap<>();
+        log.debug("calculating apps to include for requested tags '{}' ...", requestTags);
         if (props.getApps() != null) {
             for (Entry<String, AppConfigurationProperties> app : props.getApps().entrySet()) {
                 List<String> appTags = app.getValue().getTags();
                 if (appTags == null) {
-                    log.debug("-- Skipping app with no Tags [{}]", app);
+                    log.debug("-- Skipping app '{}' with no tags defined", app.getKey());
                     continue;
                 }
-                // Alle Globals hinzufügen wenn angefordert
-                if (requestTags.contains(TAG_GLOBAL) && appTags.contains(TAG_GLOBAL)) {
-                    appMap.put(app.getKey(), app.getValue());
-                    log.debug("-- Adding Global app [{}]", app);
-                } else {
-                    // Füge Referatsicons hinzu wenn in Tags angefordert und Recht in aud des
-                    // access-token
-                    // vorhanden
-                    boolean hasMatchingTag = requestTags.stream()
-                            .anyMatch(appTags.stream().collect(Collectors.toSet())::contains);
-                    // Verwerfe weil kein passendes Tag angefordert
-                    if (!hasMatchingTag) {
-                        log.debug("-- Skipping app. No matching Tag [{}]", app);
-                        continue;
-                    }
-                    // Verwerfe weil clientId gesetzt, der user dieses Recht aber nicht hat
-                    if (!hasMatchingResourceAccess(app.getValue().getClientId(), clientIdAccessListOfUser)) {
-                        log.debug("-- Skipping app. No matching clientId access [{}]", app);
-                        continue;
-                    }
-                    log.debug("-- Adding Referats app [{}]", app);
-                    appMap.put(app.getKey(), app.getValue());
+                boolean hasMatchingTag = requestTags.stream()
+                        .anyMatch(appTags.stream().collect(Collectors.toSet())::contains);
+                if (!hasMatchingTag) {
+                    log.debug("-- Skipping app '{}' due to no matching tag", app.getKey());
+                    continue;
                 }
+                if (!hasMatchingResourceAccess(app.getValue().getClientId(), clientIdAccessListOfUser)) {
+                    log.debug("-- Skipping app '{}' due to no matching clientId access", app.getKey());
+                    continue;
+                }
+                log.debug("-- Adding app '{}' to unsorted application list", app.getKey());
+                appMap.put(app.getKey(), app.getValue());
             }
         }
+        return sortMapByOrderProp(appMap);
+    }
 
-        return appMap;
+    private Map<String, AppConfigurationProperties> sortMapByOrderProp(Map<String, AppConfigurationProperties> appMap) {
+        log.debug("Sorting application list: {}", appMap.keySet());
+        List<Map.Entry<String, AppConfigurationProperties>> entryList = new ArrayList<>(appMap.entrySet());
+
+        Collections.sort(entryList, new Comparator<Map.Entry<String, AppConfigurationProperties>>() {
+            @Override
+            public int compare(Map.Entry<String, AppConfigurationProperties> o1, Map.Entry<String, AppConfigurationProperties> o2) {
+                if (o1.getValue().getSortOrder() == null && o2.getValue().getSortOrder() == null) {
+                    return 0;
+                } else if (o1.getValue().getSortOrder() != null && o2.getValue().getSortOrder() == null) {
+                    return -1;
+                } else if (o1.getValue().getSortOrder() == null && o2.getValue().getSortOrder() != null) {
+                    return 1;
+                } else {
+                    return o1.getValue().getSortOrder().compareTo(o2.getValue().getSortOrder());
+                }
+            }
+        });
+
+        LinkedHashMap<String, AppConfigurationProperties> result = new LinkedHashMap<>();
+        for (Map.Entry<String, AppConfigurationProperties> e : entryList) {
+            log.trace("-- sorted add - adding '{}'", e.getKey());
+            result.put(e.getKey(), e.getValue());
+        }
+        log.debug("Sorted application list result: {}", result.keySet());
+        return result;
     }
 
     private boolean hasMatchingResourceAccess(List<String> clientIdAccessOfApp, List<String> clientIdListOfUser) {

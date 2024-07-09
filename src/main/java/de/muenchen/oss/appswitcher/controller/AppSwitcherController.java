@@ -23,6 +23,7 @@
 package de.muenchen.oss.appswitcher.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
@@ -30,13 +31,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.muenchen.oss.appswitcher.AppConfigurationProperties;
 import de.muenchen.oss.appswitcher.AppswitcherProperties;
 import de.muenchen.oss.appswitcher.service.AppMatchingService;
 import de.muenchen.oss.appswitcher.session.SessionBean;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class AppSwitcherController {
 
     public static final String TAG_GLOBAL = "global";
@@ -48,9 +52,10 @@ public class AppSwitcherController {
     @GetMapping("/")
     public String greeting(@RequestParam(required = false, defaultValue = TAG_GLOBAL) List<String> tags,
             OAuth2AuthenticationToken authentication, Model model) {
-        model.addAttribute("apps", service.erzeugeAppliste(tags, this.props, sessionBean.getAudClaims()));
+        Map<String, AppConfigurationProperties> apps = service.erzeugeAppliste(tags, this.props, sessionBean.getAudClaims());
+        log.info("Rendering view for requested tags {} with application keys: {}", tags, apps.keySet());
+        model.addAttribute("apps", apps);
         return "appswitcher";
-
     }
 
 }
