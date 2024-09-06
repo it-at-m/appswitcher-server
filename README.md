@@ -121,7 +121,7 @@ Keycloak integration can be enabled by enabling the Spring profile `keycloak` (s
 
 ### Docker
 
-You can use the official container image [itatm/appswitcher-server](https://hub.docker.com/r/itatm/appswitcher-server). To provide your [custom Applications](#custom-applications) create a custom `application.yml` containing your applications under the key `appswitcher.apps.*` and mount the file as a volume at `/deployments/config/application.yaml`.
+You can use the official container image [itatm/appswitcher-server](https://hub.docker.com/r/itatm/appswitcher-server). To provide your [custom Applications](#custom-applications) create a custom `application.yml` containing your applications under the key `appswitcher.apps.*` and mount the file as a volume at `/workspace/config/application.yml`.
 
 ### Kubernetes
 
