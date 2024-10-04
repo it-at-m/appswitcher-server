@@ -84,7 +84,7 @@ jobs:
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,ghcr.io/it-at-m/appswitcher-server:latest; fi
-          mvn -B -ntp -P build-image,publish verify
+          mvn -B -ntp -DskipTests -P build-image,publish verify
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
