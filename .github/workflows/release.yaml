@@ -70,7 +70,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: docker.io/itatm/appswitcher-server
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
             ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
