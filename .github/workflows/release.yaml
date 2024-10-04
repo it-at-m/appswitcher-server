@@ -76,14 +76,14 @@ jobs:
             ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
       - name: Build with Maven
         env:
-          IMAGE_NAME: docker.io/itatm/appswitcher-server
+          IMAGE_NAME: ghcr.io/${{ github.repository }}
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
-          REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          REGISTRY_TOKEN: ${{ secrets.DOCKERHUB_KEY }}
+          REGISTRY_USER: ${{ github.repository_owner }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,docker.io/itatm/appswitcher-server:latest; fi
+          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,ghcr.io/it-at-m/appswitcher-server:latest; fi
           mvn -B -ntp -P build-image,publish verify
       - name: Create GitHub Release
         id: create_release
@@ -95,11 +95,3 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-      - name: Update Docker Hub Description
-        uses: peter-evans/dockerhub-description@v4
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_KEY }}
-          repository: itatm/appswitcher-server
-          readme-filepath: ./IMAGE_README.md
-          short-description: ${{ github.event.repository.description }}
