@@ -28,12 +28,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 /**
  * The central class for configuration of all security aspects.
@@ -44,29 +47,25 @@ public class SecurityConfiguration {
 
     @Bean
     @Profile("keycloak")
-    public SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
-        // @formatter:off
-		configureBase(http);
-		http
-			.authorizeHttpRequests()
-				.requestMatchers("/actuator/info", "/actuator/health","/actuator/health/**").permitAll()
-				.anyRequest().authenticated()
-			.and().oauth2Login();
-		// @formatter:on
+    SecurityFilterChain keycloakFilterChain(HttpSecurity http) throws Exception {
+        configureBase(http);
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
+                .requestMatchers("/actuator/info", "/actuator/health", "/actuator/health/**").permitAll().anyRequest()
+                .authenticated()).oauth2Login(withDefaults());
         return http.build();
     }
 
     @Bean
     @Profile("!keycloak")
-    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         configureBase(http);
-        http.authorizeHttpRequests().anyRequest().permitAll();
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests.anyRequest().permitAll());
         return http.build();
     }
 
     @Bean
     @Profile("keycloak")
-    public JwtDecoder jwtDecoderByIssuerUri(@Value("${appswitcher.keycloak.jwk-set-uri}") String jwkSetUri) {
+    JwtDecoder jwtDecoderByIssuerUri(@Value("${appswitcher.keycloak.jwk-set-uri}") String jwkSetUri) {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
         OAuth2TokenValidator<Jwt> delegatingValidator = new DelegatingOAuth2TokenValidator<>();
         decoder.setJwtValidator(delegatingValidator);
@@ -74,7 +73,8 @@ public class SecurityConfiguration {
     }
 
     private void configureBase(HttpSecurity http) throws Exception {
-        http.csrf().disable().headers().frameOptions().disable().and().cors();
+        http.csrf(csrf -> csrf.disable()).headers(headers -> headers.frameOptions(FrameOptionsConfig::disable))
+                .cors(withDefaults());
     }
 
 }

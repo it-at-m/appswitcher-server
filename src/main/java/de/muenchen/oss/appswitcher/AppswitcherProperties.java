@@ -22,6 +22,7 @@
  */
 package de.muenchen.oss.appswitcher;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -36,7 +37,7 @@ import lombok.Data;
 public class AppswitcherProperties {
 
     @NestedConfigurationProperty
-    private Map<String, AppConfigurationProperties> apps;
+    private Map<String, AppConfigurationProperties> apps = new LinkedHashMap<>();
 
     @NestedConfigurationProperty
     private KeycloakConfigurationProperties keycloak;
