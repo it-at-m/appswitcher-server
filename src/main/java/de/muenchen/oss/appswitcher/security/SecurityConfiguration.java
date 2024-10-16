@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
@@ -48,10 +49,10 @@ public class SecurityConfiguration {
         // @formatter:off
 		configureBase(http);
 		http
-			.authorizeHttpRequests()
+			.authorizeHttpRequests(authz -> authz
 				.requestMatchers("/actuator/info", "/actuator/health","/actuator/health/**").permitAll()
 				.anyRequest().authenticated()
-			.and().oauth2Login();
+			).oauth2Login(Customizer.withDefaults());
 		// @formatter:on
         return http.build();
     }
@@ -60,7 +61,7 @@ public class SecurityConfiguration {
     @Profile("!keycloak")
     public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
         configureBase(http);
-        http.authorizeHttpRequests().anyRequest().permitAll();
+        http.authorizeHttpRequests(authz -> authz.anyRequest().permitAll());
         return http.build();
     }
 
@@ -74,7 +75,11 @@ public class SecurityConfiguration {
     }
 
     private void configureBase(HttpSecurity http) throws Exception {
-        http.csrf().disable().headers().frameOptions().disable().and().cors();
+        http.csrf(csrf -> csrf.disable()) // Disable CSRF protection
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable()) // Disable X-Frame-Options
+                )
+                .cors(cors -> cors.disable());
     }
 
 }
