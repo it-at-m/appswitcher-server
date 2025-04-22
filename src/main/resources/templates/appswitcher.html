@@ -3,7 +3,7 @@
   <style>
     nav {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
       justify-items: center;
       align-items: center;
 
@@ -20,13 +20,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: space-around;
       gap: 4px;
-      height: 70px;
+      height: 90px;
+      width: 100%;
 
       cursor: pointer;
 
-      aspect-ratio: 1;
       border-radius: 8px;
       padding: 6px;
 
@@ -34,8 +33,11 @@
       font-size: 0.875rem;
 
       overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    }
+
+    .tile span {
+      white-space: normal;
+      text-align: center;
     }
 
     .tile:hover {
@@ -44,6 +46,8 @@
 
     img {
       object-fit: contain;
+      flex-shrink: 0;
+      height: 50px;
     }
   </style>
 
@@ -63,9 +67,7 @@
       >
         <div class="tile">
           <img width="50" height="50" th:src="${app.value.imageUrl}" th:alt="${app.value.displayName}" />
-          <span
-            th:text="${#strings.abbreviate(app.value.displayName,15)}"
-          ></span>
+          <span th:text="${#strings.abbreviate(app.value.displayName, 25)}"></span>
         </div>
       </a>
     </nav>
