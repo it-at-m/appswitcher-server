@@ -57,13 +57,54 @@ spring:
     
 appswitcher:
   apps:
-    telefonbuch:
-      display-name: Telefonbuch
-      url: https://www.gelbeseiten.de/
-      image-url: https://i.imgur.com/PA25O7T.png
+    example1:
+      display-name: Example App
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
       tags:
         - global
-        - telefonbuch
+    example2:
+      display-name: Longer Name with Breaks
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
+    example3:
+      display-name: LONG-NAME-WITHOUT-BREAKS
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
+    example4:
+      display-name: ACME App
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
+    example5:
+      display-name: Telefonbuch
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
+    example6:
+      display-name: Telefonbuch
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
+    example7:
+      display-name: Telefonbuch
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
+    example8:
+      display-name: Telefonbuch
+      url: https://example.com
+      image-url: https://assets.muenchen.de/logos/itm/itm-logo-64.png
+      tags:
+        - global
         
 ---
 spring:
