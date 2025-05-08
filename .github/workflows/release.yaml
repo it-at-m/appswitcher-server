@@ -85,6 +85,36 @@ jobs:
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,ghcr.io/it-at-m/appswitcher-server:latest; fi
           mvn -B -ntp -DskipTests -P ci,build-image,publish verify
+
+  publish-native-image:
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    steps:
+      - name: checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.release-tag }}
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-native
+          tags: |
+            type=raw,value=${{ github.event.inputs.release-version }}
+            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
       - name: Build native image (default profile)
         env:
           IMAGE_NAME: ghcr.io/${{ github.repository }}-native
@@ -96,7 +126,37 @@ jobs:
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,$IMAGE_NAME:latest; fi
           mvn -B -ntp -DskipTests -P ci,native,build-native-image,publish verify
-      - name: Build native image  (keycloak profile)
+
+  publish-native-keycloak-image:
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    steps:
+      - name: checkout release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.release-tag }}
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: "maven"
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-native-keycloak
+          tags: |
+            type=raw,value=${{ github.event.inputs.release-version }}
+            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
+      - name: Build native image (keycloak profile)
         env:
           IMAGE_NAME: ghcr.io/${{ github.repository }}-native-keycloak
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
@@ -107,6 +167,14 @@ jobs:
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,$IMAGE_NAME:latest; fi
           mvn -B -ntp -DskipTests -P ci,keycloak,native,build-native-image,publish verify
+  
+  github-release:
+    needs: ["publish-image", "publish-native-image", "publish-native-keycloak-image"]
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: write
+    steps:
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2

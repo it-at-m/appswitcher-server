@@ -33,7 +33,7 @@
 	</parent>
 	<groupId>de.muenchen.oss.appswitcher</groupId>
 	<artifactId>appswitcher-server</artifactId>
-	<version>1.3.1-SNAPSHOT</version>
+	<version>1.2.4-SNAPSHOT</version>
 	<name>appswitcher-server</name>
 	<description>Server component for a Google-like app switching experience</description>
 	<properties>
