@@ -121,12 +121,12 @@ Keycloak integration can be enabled by enabling the Spring profile `keycloak` (s
 
 ### Docker
 
-You can use the official container image [ghrc.io/it-at-m/appswitcher-server](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server). To provide your [custom Applications](#custom-applications) create a custom `application.yml` containing your applications under the key `appswitcher.apps.*` and mount the file as a volume at `/workspace/config/application.yml`.
+You can use the official container image [ghcr.io/it-at-m/appswitcher-server](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server). To provide your [custom Applications](#custom-applications) create a custom `application.yml` containing your applications under the key `appswitcher.apps.*` and mount the file as a volume at `/workspace/config/application.yml`.
 
 If you prefer to run a native image for faster startup times, there a two image variants available:
 
-- [ghrc.io/it-at-m/appswitcher-server-native](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server-native)
-- [ghrc.io/it-at-m/appswitcher-server-native-keycloak](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server-native-keycloak) (for [Keycloak integration](#keycloak-integration) support)
+- [ghcr.io/it-at-m/appswitcher-server-native](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server-native)
+- [ghcr.io/it-at-m/appswitcher-server-native-keycloak](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server-native-keycloak) (for [Keycloak integration](#keycloak-integration) support)
 
 
 ### Kubernetes
