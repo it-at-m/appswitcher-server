@@ -23,50 +23,62 @@
     THE SOFTWARE.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.16</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<version>4.1.1</version>
+		<relativePath />
 	</parent>
+
 	<groupId>de.muenchen.oss.appswitcher</groupId>
 	<artifactId>appswitcher-server</artifactId>
 	<version>1.3.1-SNAPSHOT</version>
+
 	<name>appswitcher-server</name>
 	<description>Server component for a Google-like app switching experience</description>
+
 	<properties>
-		<java.version>17</java.version>
+		<java.version>25</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<image.name>itatm/${project.artifactId}</image.name>
 	</properties>
 
 	<dependencies>
+
+		<!-- Web / MVC -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
+
+		<!-- Thymeleaf -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+
+		<!-- Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-client</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security-oauth2-client</artifactId>
 		</dependency>
+
+		<!-- Actuator -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-oauth2-jose</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
 		<!-- Logging -->
@@ -74,53 +86,91 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-logging</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>9.0</version>
 		</dependency>
 
-
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<scope>provided</scope>
 		</dependency>
+
+		<!-- Configuration metadata -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Development -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Tests -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-restclient</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-resttestclient</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
 		<plugins>
+
+			<!-- Maven Java compiler and Lombok annotation processing -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- native image building -->
+
+			<!-- Native image building -->
 			<plugin>
 				<groupId>org.graalvm.buildtools</groupId>
 				<artifactId>native-maven-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -133,7 +183,7 @@
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>[3.6,)</version>
+									<version>[3.6.3,)</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
 									<version>[${java.version},)</version>
@@ -143,7 +193,8 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- license plugin -->
+
+			<!-- License plugin -->
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
@@ -156,7 +207,8 @@
 					<licenseSets>
 						<licenseSet>
 							<header>
-								com/mycila/maven/plugin/license/templates/MIT.txt</header>
+								com/mycila/maven/plugin/license/templates/MIT.txt
+							</header>
 							<includes>
 								<include>**/*.java</include>
 								<include>**/*.xml</include>
@@ -185,6 +237,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>com.diffplug.spotless</groupId>
 				<artifactId>spotless-maven-plugin</artifactId>
@@ -199,14 +252,13 @@
 				<configuration>
 					<java>
 						<includes>
-							<include>src/main/java/**/*.java</include> <!-- Check
-							application code -->
-							<include>src/test/java/**/*.java</include> <!-- Check
-							application tests code -->
+							<include>src/main/java/**/*.java</include>
+							<include>src/test/java/**/*.java</include>
 						</includes>
 						<eclipse>
 							<file>
-								itm-java-codeformat/java_codestyle_formatter.xml</file>
+								itm-java-codeformat/java_codestyle_formatter.xml
+							</file>
 						</eclipse>
 						<trimTrailingWhitespace />
 						<endWithNewline />
@@ -221,38 +273,13 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>com.diffplug.spotless</groupId>
-										<artifactId>spotless-maven-plugin</artifactId>
-										<versionRange>[2.43.0,)</versionRange>
-										<goals>
-											<goal>check</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+
 	</build>
 
 	<profiles>
+
 		<profile>
 			<id>lhm</id>
 			<build>
@@ -273,12 +300,14 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>ci</id>
 			<properties>
 				<image.name>${env.IMAGE_NAME}</image.name>
 			</properties>
 		</profile>
+
 		<profile>
 			<id>build-image</id>
 			<build>
@@ -297,12 +326,14 @@
 								</env>
 								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
+								<builder>paketobuildpacks/builder-noble-java:latest</builder>
 								<buildpacks>
 									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/java</buildpack>
+										urn:cnb:builder:paketo-buildpacks/java
+									</buildpack>
 									<buildpack>
-										docker.io/paketobuildpacks/health-checker:latest</buildpack>
+										docker.io/paketobuildpacks/health-checker:latest
+									</buildpack>
 								</buildpacks>
 							</image>
 						</configuration>
@@ -318,6 +349,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>build-native-image</id>
 			<build>
@@ -339,11 +371,14 @@
 								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 								<buildpacks>
 									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/java</buildpack>
+										urn:cnb:builder:paketo-buildpacks/java
+									</buildpack>
 									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/native-image</buildpack>
+										urn:cnb:builder:paketo-buildpacks/native-image
+									</buildpack>
 									<buildpack>
-										docker.io/paketobuildpacks/health-checker:latest</buildpack>
+										docker.io/paketobuildpacks/health-checker:latest
+									</buildpack>
 								</buildpacks>
 							</image>
 						</configuration>
@@ -359,6 +394,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>keycloak</id>
 			<build>
@@ -378,6 +414,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 		<profile>
 			<id>publish</id>
 			<build>
@@ -400,6 +437,7 @@
 				</plugins>
 			</build>
 		</profile>
+
 	</profiles>
 
 	<licenses>
@@ -431,7 +469,8 @@
 		<url>https://github.com/it-at-m/appswitcher-server</url>
 		<connection>scm:git:https://github.com/it-at-m/appswitcher-server.git</connection>
 		<developerConnection>
-			scm:git:https://github.com/it-at-m/appswitcher-server.git</developerConnection>
+			scm:git:https://github.com/it-at-m/appswitcher-server.git
+		</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
