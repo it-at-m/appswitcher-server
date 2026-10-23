@@ -165,12 +165,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- Native image building -->
-			<plugin>
-				<groupId>org.graalvm.buildtools</groupId>
-				<artifactId>native-maven-plugin</artifactId>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -279,12 +273,22 @@
 	</build>
 
 	<profiles>
-
 		<profile>
 			<id>ci</id>
 			<properties>
 				<image.name>${env.IMAGE_NAME}</image.name>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<imagePlatform>${env.IMAGE_BUILD_PLATFORM}</imagePlatform>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 		<profile>
@@ -362,6 +366,66 @@
 							</image>
 						</configuration>
 						<executions>
+							<execution>
+								<id>process-aot</id>
+								<goals>
+									<goal>process-aot</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>build-image</id>
+								<goals>
+									<goal>build-image-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>build-native-image-keycloak</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<name>${image.name}:${project.version}</name>
+								<env>
+									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
+									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
+									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
+									<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
+								</env>
+								<verboseLogging>true</verboseLogging>
+								<tags>${env.IMAGE_TAGS}</tags>
+								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
+								<buildpacks>
+									<buildpack>
+										urn:cnb:builder:paketo-buildpacks/java
+									</buildpack>
+									<buildpack>
+										urn:cnb:builder:paketo-buildpacks/native-image
+									</buildpack>
+									<buildpack>
+										docker.io/paketobuildpacks/health-checker:latest
+									</buildpack>
+								</buildpacks>
+							</image>
+						</configuration>
+						<executions>
+							<execution>
+								<id>process-aot</id>
+								<goals>
+									<goal>process-aot</goal>
+								</goals>
+								<configuration>
+									<profiles>keycloak</profiles>
+								</configuration>
+							</execution>
 							<execution>
 								<id>build-image</id>
 								<goals>
