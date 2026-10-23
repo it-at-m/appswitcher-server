@@ -89,55 +89,55 @@ jobs:
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
           mvn -B -ntp -DskipTests -P ci,publish,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }} package
 
-  publish-image-arm64:
-    needs: prepare-release
-    runs-on: ubuntu-26.04-arm
-    permissions:
-      packages: write
-      contents: write
-    strategy:
-      matrix:
-        profile: [ "build-image", "build-image-native", "build-image-native-keycloak" ]
-    steps:
-      - name: checkout release tag
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.inputs.release-tag }}
-      - name: Set up JDK
-        uses: actions/setup-java@v6
-        with:
-          java-version: "25"
-          distribution: "temurin"
-          cache: "maven"
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
-          tags: |
-            type=raw,value=${{ github.event.inputs.release-version }}
-            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
-      - name: Build image
-        env:
-          IMAGE_NAME: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
-          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
-          REGISTRY_USER: ${{ github.repository_owner }}
-          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
-          IMAGE_BUILD_PLATFORM: "linux/arm64"
-        run: |
-          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          mvn -B -ntp -DskipTests -P ci,publish,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }} package
+#  publish-image-arm64:
+#    needs: prepare-release
+#    runs-on: ubuntu-26.04-arm
+#    permissions:
+#      packages: write
+#      contents: write
+#    strategy:
+#      matrix:
+#        profile: [ "build-image", "build-image-native", "build-image-native-keycloak" ]
+#    steps:
+#      - name: checkout release tag
+#        uses: actions/checkout@v7
+#        with:
+#          ref: ${{ github.event.inputs.release-tag }}
+#      - name: Set up JDK
+#        uses: actions/setup-java@v6
+#        with:
+#          java-version: "25"
+#          distribution: "temurin"
+#          cache: "maven"
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v4
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v4
+#      - name: Extract metadata (tags, labels) for Docker
+#        id: meta
+#        uses: docker/metadata-action@v6
+#        with:
+#          images: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
+#          tags: |
+#            type=raw,value=${{ github.event.inputs.release-version }}
+#            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
+#      - name: Build image
+#        env:
+#          IMAGE_NAME: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
+#          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
+#          REGISTRY_USER: ${{ github.repository_owner }}
+#          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
+#          IMAGE_BUILD_PLATFORM: "linux/arm64"
+#        run: |
+#          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
+#          mvn -B -ntp -DskipTests -P ci,publish,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }} package
 
 
   github-release:
     needs:
       - publish-image-amd64
-      - publish-image-arm64
+#      - publish-image-arm64
     runs-on: ubuntu-latest
     permissions:
       contents: write
