@@ -46,4 +46,4 @@ jobs:
           IMAGE_BUILD_PLATFORM: ${{ matrix.platform }}
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          mvn -B -ntp -P ci,${{ matrix.profile }}${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && ',publish' || '' }} package
+          mvn -B -ntp -P ci,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }}${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && ',publish' || '' }} package

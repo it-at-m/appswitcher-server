@@ -367,12 +367,6 @@
 						</configuration>
 						<executions>
 							<execution>
-								<id>process-aot</id>
-								<goals>
-									<goal>process-aot</goal>
-								</goals>
-							</execution>
-							<execution>
 								<id>build-image</id>
 								<goals>
 									<goal>build-image-no-fork</goal>
@@ -419,9 +413,6 @@
 						<executions>
 							<execution>
 								<id>process-aot</id>
-								<goals>
-									<goal>process-aot</goal>
-								</goals>
 								<configuration>
 									<profiles>keycloak</profiles>
 								</configuration>
