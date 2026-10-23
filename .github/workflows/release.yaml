@@ -45,12 +45,15 @@ jobs:
           -Dtag=${{ github.event.inputs.release-tag }} 
           -Darguments="-DskipTests"
 
-  publish-image:
+  publish-image-amd64:
     needs: prepare-release
     runs-on: ubuntu-latest
     permissions:
       packages: write
       contents: write
+    strategy:
+      matrix:
+        profile: [ "build-image", "build-image-native", "build-image-native-keycloak" ]
     steps:
       - name: checkout release tag
         uses: actions/checkout@v7
@@ -70,28 +73,31 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
             ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
       - name: Build image
         env:
-          IMAGE_NAME: ghcr.io/${{ github.repository }}
+          IMAGE_NAME: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
           REGISTRY_USER: ${{ github.repository_owner }}
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
+          IMAGE_BUILD_PLATFORM: "linux/amd64"
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,ghcr.io/it-at-m/appswitcher-server:latest; fi
-          mvn -B -ntp -DskipTests -P ci,build-image,publish verify
+          mvn -B -ntp -DskipTests -P ci,publish,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }} package
 
-  publish-native-image:
+  publish-image-arm64:
     needs: prepare-release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     permissions:
       packages: write
       contents: write
+    strategy:
+      matrix:
+        profile: [ "build-image", "build-image-native", "build-image-native-keycloak" ]
     steps:
       - name: checkout release tag
         uses: actions/checkout@v7
@@ -111,76 +117,35 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}-native
+          images: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
           tags: |
             type=raw,value=${{ github.event.inputs.release-version }}
             ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
-      - name: Build native image (default profile)
+      - name: Build image
         env:
-          IMAGE_NAME: ghcr.io/${{ github.repository }}-native
+          IMAGE_NAME: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
           IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
           REGISTRY_USER: ${{ github.repository_owner }}
           REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
+          IMAGE_BUILD_PLATFORM: "linux/arm64"
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,$IMAGE_NAME:latest; fi
-          mvn -B -ntp -DskipTests -P ci,native,build-native-image,publish verify
+          mvn -B -ntp -DskipTests -P ci,publish,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }} package
 
-  publish-native-keycloak-image:
-    needs: prepare-release
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: write
-    steps:
-      - name: checkout release tag
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.inputs.release-tag }}
-      - name: Set up JDK
-        uses: actions/setup-java@v6
-        with:
-          java-version: "25"
-          distribution: "temurin"
-          cache: "maven"
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v6
-        with:
-          images: ghcr.io/${{ github.repository }}-native-keycloak
-          tags: |
-            type=raw,value=${{ github.event.inputs.release-version }}
-            ${{ (github.event.inputs.latest-image == 'y' && 'type=raw,value=latest') || '' }}
-      - name: Build native image (keycloak profile)
-        env:
-          IMAGE_NAME: ghcr.io/${{ github.repository }}-native-keycloak
-          IMAGE_RAW_TAGS: ${{ steps.meta.outputs.tags }}
-          REGISTRY_USER: ${{ github.repository_owner }}
-          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LATEST_TAG: ${{ (github.event.inputs.latest-image == 'y' && 'y') || 'n' }}
-        run: |
-          export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          if [[ $LATEST_TAG == "y" ]]; then export IMAGE_TAGS=$IMAGE_TAGS,$IMAGE_NAME:latest; fi
-          mvn -B -ntp -DskipTests -P ci,keycloak,native,build-native-image,publish verify
-  
+
   github-release:
-    needs: ["publish-image", "publish-native-image", "publish-native-keycloak-image"]
+    needs:
+      - publish-image-amd64
+      - publish-image-arm64
     runs-on: ubuntu-latest
     permissions:
-      packages: write
       contents: write
     steps:
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v3
         with:
-          files: |
-            target/*.jar
           tag_name: ${{ github.event.inputs.release-tag }}
           draft: false
           prerelease: false
