@@ -305,7 +305,7 @@
 								</env>
 								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-noble-java:latest</builder>
+								<builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
 								<buildpacks>
 									<buildpack>
 										urn:cnb:builder:paketo-buildpacks/java
