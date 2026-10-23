@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ format('ghcr.io/{0}{1}', github.repository, matrix.profile == 'build-image-native' && '-native' || matrix.profile == 'build-image-native-keycloak' && '-native-keycloak' || '') }}
           tags: |
             type=sha
             type=ref,event=branch
