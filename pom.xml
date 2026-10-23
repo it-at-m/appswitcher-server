@@ -351,7 +351,7 @@
 								</env>
 								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
+								<builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
 								<buildpacks>
 									<buildpack>
 										urn:cnb:builder:paketo-buildpacks/java
@@ -402,7 +402,7 @@
 								</env>
 								<verboseLogging>true</verboseLogging>
 								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-jammy-base:latest</builder>
+								<builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
 								<buildpacks>
 									<buildpack>
 										urn:cnb:builder:paketo-buildpacks/java
