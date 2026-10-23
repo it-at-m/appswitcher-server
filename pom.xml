@@ -32,8 +32,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.1</version>
-		<relativePath />
+		<version>4.1.2</version>
+		<relativePath/>
 	</parent>
 
 	<groupId>de.muenchen.oss.appswitcher</groupId>
@@ -47,7 +47,7 @@
 		<java.version>25</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<image.name>itatm/${project.artifactId}</image.name>
+		<image.name>${project.artifactId}</image.name>
 	</properties>
 
 	<dependencies>
@@ -260,8 +260,8 @@
 								itm-java-codeformat/java_codestyle_formatter.xml
 							</file>
 						</eclipse>
-						<trimTrailingWhitespace />
-						<endWithNewline />
+						<trimTrailingWhitespace/>
+						<endWithNewline/>
 					</java>
 				</configuration>
 				<executions>
@@ -279,27 +279,6 @@
 	</build>
 
 	<profiles>
-
-		<profile>
-			<id>lhm</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.springframework.boot</groupId>
-						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<docker>
-								<builderRegistry>
-									<username>${env.DOCKERHUB_USERNAME}</username>
-									<password>${env.DOCKERHUB_PASSWORD}</password>
-									<url>https://index.docker.io/v1/</url>
-								</builderRegistry>
-							</docker>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 
 		<profile>
 			<id>ci</id>
