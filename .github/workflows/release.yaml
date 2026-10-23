@@ -27,15 +27,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.branch }}
       - name: Setup git user
         uses: fregante/setup-git-user@v2
       - name: Install Java and Maven
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
-          java-version: 17
+          java-version: "25"
           distribution: "temurin"
       - name: Perform maven release
         run: >
@@ -53,19 +53,19 @@ jobs:
       contents: write
     steps:
       - name: checkout release tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.release-tag }}
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
-          java-version: "17"
+          java-version: "25"
           distribution: "temurin"
           cache: "maven"
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -94,22 +94,22 @@ jobs:
       contents: write
     steps:
       - name: checkout release tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.release-tag }}
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
+      - name: Set up JDK
+        uses: actions/setup-java@v6
         with:
-          java-version: "17"
+          java-version: "25"
           distribution: "temurin"
           cache: "maven"
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}-native
           tags: |
@@ -135,22 +135,22 @@ jobs:
       contents: write
     steps:
       - name: checkout release tag
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.inputs.release-tag }}
-      - name: Set up JDK 17
-        uses: actions/setup-java@v5
+      - name: Set up JDK
+        uses: actions/setup-java@v6
         with:
-          java-version: "17"
+          java-version: "25"
           distribution: "temurin"
           cache: "maven"
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/${{ github.repository }}-native-keycloak
           tags: |
@@ -177,7 +177,7 @@ jobs:
     steps:
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             target/*.jar
