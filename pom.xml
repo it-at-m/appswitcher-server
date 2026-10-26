@@ -23,9 +23,7 @@
     THE SOFTWARE.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -33,12 +31,12 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.1.2</version>
-		<relativePath/>
+		<relativePath />
 	</parent>
 
 	<groupId>de.muenchen.oss.appswitcher</groupId>
 	<artifactId>appswitcher-server</artifactId>
-	<version>1.4.0-SNAPSHOT</version>
+	<version>1.4.0</version>
 
 	<name>appswitcher-server</name>
 	<description>Server component for a Google-like app switching experience</description>
@@ -254,8 +252,8 @@
 								itm-java-codeformat/java_codestyle_formatter.xml
 							</file>
 						</eclipse>
-						<trimTrailingWhitespace/>
-						<endWithNewline/>
+						<trimTrailingWhitespace />
+						<endWithNewline />
 					</java>
 				</configuration>
 				<executions>
@@ -485,7 +483,7 @@
 		<developerConnection>
 			scm:git:https://github.com/it-at-m/appswitcher-server.git
 		</developerConnection>
-		<tag>HEAD</tag>
+		<tag>v1.4.0</tag>
 	</scm>
 
 </project>
