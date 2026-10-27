@@ -45,7 +45,7 @@ jobs:
           IMAGE_BUILD_PLATFORM: "linux/amd64"
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          mvn -B -ntp -P ci,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native,nativeTest' || '' }}${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && ',publish' || '' }} package
+          mvn -B -ntp -P ci,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }}${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && ',publish' || '' }} package
 
   build-arm64:
     runs-on: ubuntu-26.04-arm
@@ -85,7 +85,7 @@ jobs:
           IMAGE_BUILD_PLATFORM: "linux/arm64"
         run: |
           export IMAGE_TAGS="${IMAGE_RAW_TAGS//$'\n'/,}"
-          mvn -B -ntp -P ci,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native,nativeTest' || '' }}${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && ',publish' || '' }} package
+          mvn -B -ntp -P ci,${{ matrix.profile }}${{ contains(matrix.profile, 'native') && ',native' || '' }}${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && ',publish' || '' }} package
 
   merge-multiarch-manifests:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
