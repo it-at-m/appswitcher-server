@@ -36,7 +36,7 @@
 
 	<groupId>de.muenchen.oss.appswitcher</groupId>
 	<artifactId>appswitcher-server</artifactId>
-	<version>1.4.1-SNAPSHOT</version>
+	<version>1.4.1</version>
 
 	<name>appswitcher-server</name>
 	<description>Server component for a Google-like app switching experience</description>
@@ -488,7 +488,7 @@
 		<developerConnection>
 			scm:git:https://github.com/it-at-m/appswitcher-server.git
 		</developerConnection>
-		<tag>HEAD</tag>
+		<tag>1.4.1</tag>
 	</scm>
 
 </project>
