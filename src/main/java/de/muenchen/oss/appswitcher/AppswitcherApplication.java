@@ -41,6 +41,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import de.muenchen.oss.appswitcher.AppswitcherApplication.MyRuntimeHints;
 import de.muenchen.oss.appswitcher.session.SessionBean;
+import org.thymeleaf.expression.Strings;
 
 @SpringBootApplication
 @ImportRuntimeHints(value = { MyRuntimeHints.class })
@@ -80,6 +81,7 @@ public class AppswitcherApplication {
             hints.reflection().registerType(LinkedHashMap.class, MemberCategory.values());
             hints.reflection().registerType(TypeReference.of("java.util.Map$Entry"), MemberCategory.values());
             hints.reflection().registerType(TypeReference.of("java.util.LinkedHashMap$Entry"), MemberCategory.values());
+            hints.reflection().registerType(Strings.class, MemberCategory.INVOKE_DECLARED_METHODS);
         }
 
     }

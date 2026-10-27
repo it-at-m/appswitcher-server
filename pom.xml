@@ -143,6 +143,11 @@
 	<build>
 		<plugins>
 
+			<plugin>
+				<groupId>org.graalvm.buildtools</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+			</plugin>
+
 			<!-- Maven Java compiler and Lombok annotation processing -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
