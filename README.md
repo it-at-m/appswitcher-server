@@ -128,6 +128,22 @@ If you prefer to run a native image for faster startup times, there a two image 
 - [ghcr.io/it-at-m/appswitcher-server-native](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server-native)
 - [ghcr.io/it-at-m/appswitcher-server-native-keycloak](https://github.com/it-at-m/appswitcher-server/pkgs/container/appswitcher-server-native-keycloak) (for [Keycloak integration](#keycloak-integration) support)
 
+minimal `docker-compose.yml` example:
+
+```yml
+services:
+  appswitcher-server:
+    image: ghcr.io/it-at-m/appswitcher-server:latest
+    environment:
+      THC_PATH: /actuator/health/liveness
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./my-application.yml:/workspace/config/application.yml
+    healthcheck:
+      test: ["CMD", "/workspace/health-check"]
+```
+
 
 ### Kubernetes
 
