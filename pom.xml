@@ -166,6 +166,28 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>${image.name}:${project.version}</name>
+						<env>
+							<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
+							<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
+							<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
+							<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
+						</env>
+						<verboseLogging>true</verboseLogging>
+						<tags>${env.IMAGE_TAGS}</tags>
+						<builder>bellsoft/buildpacks.builder:musl</builder>
+						<buildpacks>
+							<buildpack>
+								urn:cnb:builder:bellsoft/buildpacks/java
+							</buildpack>
+							<buildpack>
+								docker.io/paketobuildpacks/health-checker:latest
+							</buildpack>
+						</buildpacks>
+					</image>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -301,28 +323,6 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<image>
-								<name>${image.name}:${project.version}</name>
-								<env>
-									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
-									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
-									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
-									<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
-								</env>
-								<verboseLogging>true</verboseLogging>
-								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
-								<buildpacks>
-									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/java
-									</buildpack>
-									<buildpack>
-										docker.io/paketobuildpacks/health-checker:latest
-									</buildpack>
-								</buildpacks>
-							</image>
-						</configuration>
 						<executions>
 							<execution>
 								<id>build-image</id>
@@ -345,22 +345,12 @@
 						<artifactId>spring-boot-maven-plugin</artifactId>
 						<configuration>
 							<image>
-								<name>${image.name}:${project.version}</name>
-								<env>
-									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
-									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
-									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
-									<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
-								</env>
-								<verboseLogging>true</verboseLogging>
-								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
 								<buildpacks>
 									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/java
+										urn:cnb:builder:bellsoft/buildpacks/java
 									</buildpack>
 									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/native-image
+										urn:cnb:builder:bellsoft/buildpacks/java-native-image
 									</buildpack>
 									<buildpack>
 										docker.io/paketobuildpacks/health-checker:latest
@@ -388,31 +378,6 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<configuration>
-							<image>
-								<name>${image.name}:${project.version}</name>
-								<env>
-									<HTTP_PROXY>${env.HTTP_PROXY}</HTTP_PROXY>
-									<HTTPS_PROXY>${env.HTTPS_PROXY}</HTTPS_PROXY>
-									<NO_PROXY>${env.NO_PROXY}</NO_PROXY>
-									<BP_HEALTH_CHECKER_ENABLED>true</BP_HEALTH_CHECKER_ENABLED>
-								</env>
-								<verboseLogging>true</verboseLogging>
-								<tags>${env.IMAGE_TAGS}</tags>
-								<builder>paketobuildpacks/builder-noble-java-tiny:latest</builder>
-								<buildpacks>
-									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/java
-									</buildpack>
-									<buildpack>
-										urn:cnb:builder:paketo-buildpacks/native-image
-									</buildpack>
-									<buildpack>
-										docker.io/paketobuildpacks/health-checker:latest
-									</buildpack>
-								</buildpacks>
-							</image>
-						</configuration>
 						<executions>
 							<execution>
 								<id>process-aot</id>
