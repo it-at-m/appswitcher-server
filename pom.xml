@@ -378,6 +378,21 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<buildpacks>
+									<buildpack>
+										urn:cnb:builder:bellsoft/buildpacks/java
+									</buildpack>
+									<buildpack>
+										urn:cnb:builder:bellsoft/buildpacks/java-native-image
+									</buildpack>
+									<buildpack>
+										docker.io/paketobuildpacks/health-checker:latest
+									</buildpack>
+								</buildpacks>
+							</image>
+						</configuration>
 						<executions>
 							<execution>
 								<id>process-aot</id>
